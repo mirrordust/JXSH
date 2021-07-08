@@ -1,11 +1,9 @@
 package main
 
-import (
-	"github.com/mirrordust/splendour/m0/web"
-)
+import "github.com/mirrordust/splendour/m0/web"
 
 func main() {
-	web.Server().Run()
+	_ = web.Server().Run()
 }
 
 // func testDB() {
