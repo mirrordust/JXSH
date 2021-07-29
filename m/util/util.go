@@ -5,16 +5,18 @@ import (
 	"reflect"
 	"regexp"
 	"strings"
+
+	uuid "github.com/satori/go.uuid"
 )
 
 var matchFirstCap = regexp.MustCompile("([A-Z])([A-Z][a-z])")
 var matchAllCap = regexp.MustCompile("([a-z0-9])([A-Z])")
 
-func ToSnakeCase(str string) string {
-	str2 := matchFirstCap.ReplaceAllString(str, "${1}_${2}")
-	str2 = matchAllCap.ReplaceAllString(str2, "${1}_${2}")
-	//str2 = strings.ReplaceAll(str2, "-", "_")
-	return strings.ToLower(str2)
+func SnakeCase(camelCaseStr string) string {
+	// Based on https://gist.github.com/stoewer/fbe273b711e6a06315d19552dd4d33e6#gistcomment-3515624
+	str := matchFirstCap.ReplaceAllString(camelCaseStr, "${1}_${2}")
+	str = matchAllCap.ReplaceAllString(str, "${1}_${2}")
+	return strings.ToLower(str)
 }
 
 func StructFields(s interface{}) (map[string]reflect.Type, error) {
@@ -32,6 +34,6 @@ func StructFields(s interface{}) (map[string]reflect.Type, error) {
 	return m, nil
 }
 
-func Encrypt(s string) string {
-	return s
+func GenerateUUID() string {
+	return uuid.NewV4().String()
 }

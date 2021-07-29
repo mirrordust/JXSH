@@ -1,4 +1,4 @@
-module github.com/mirrordust/splendour/m0
+module github.com/mirrordust/w/m
 
 go 1.16
 

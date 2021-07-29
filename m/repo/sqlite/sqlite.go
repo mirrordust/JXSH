@@ -32,6 +32,7 @@ func InitDB() (*gorm.DB, error) {
 	// SetConnMaxLifetime 设置了连接可复用的最大时间
 	sqlDB.SetConnMaxLifetime(time.Hour)
 
+	// set debug to inspect SQL
 	gormDB = gormDB.Debug()
 	return gormDB, nil
 }
