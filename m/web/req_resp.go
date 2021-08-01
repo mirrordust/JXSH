@@ -18,6 +18,7 @@ func NewErrorResponse(s ...string) ErrorResponse {
 // oauth
 
 type OAuthRequest struct {
+	Token string `json:"token"`
 }
 
 type OAuthResponse struct {

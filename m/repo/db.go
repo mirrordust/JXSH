@@ -1,6 +1,7 @@
 package repo
 
 import (
+	"errors"
 	"log"
 
 	"gorm.io/gorm"
@@ -28,20 +29,23 @@ func init() {
 // ******************************
 // CRUD functions
 
-func Create(model interface{}) error {
+func Create(model interface{}) (rows int64, err error) {
 	result := DB.Create(model)
 	if result.Error != nil {
-		return newDBError(result.Error.Error())
+		return result.RowsAffected, newDBError(result.Error.Error())
 	}
-	return nil
+	return result.RowsAffected, nil
 }
 
-func FindOne(model interface{}, conds ...interface{}) error {
+func FindOne(model interface{}, conds ...interface{}) (rows int64, err error) {
 	result := DB.First(model, conds...)
 	if result.Error != nil {
-		return newDBError(result.Error.Error())
+		if errors.Is(result.Error, gorm.ErrRecordNotFound) {
+			return result.RowsAffected, nil
+		}
+		return result.RowsAffected, newDBError(result.Error.Error())
 	}
-	return nil
+	return result.RowsAffected, nil
 }
 
 type Condition struct {
@@ -51,7 +55,7 @@ type Condition struct {
 	Offset, Limit int
 }
 
-func FindAll(models interface{}, c Condition) error {
+func FindAll(models interface{}, c Condition) (rows int64, err error) {
 	tx := DB.Where(c.Query, c.Args...)
 	for _, order := range c.Orders {
 		tx = tx.Order(order)
@@ -64,25 +68,25 @@ func FindAll(models interface{}, c Condition) error {
 	}
 	result := tx.Find(models)
 	if result.Error != nil {
-		return newDBError(result.Error.Error())
+		return result.RowsAffected, newDBError(result.Error.Error())
 	}
-	return nil
+	return result.RowsAffected, nil
 }
 
-func UpdateOne(model interface{}, fields []string, newValue interface{}, conds ...interface{}) error {
+func UpdateOne(model interface{}, fields []string, newValue interface{}, conds ...interface{}) (rows int64, err error) {
 	result := DB.Model(model).Where(conds[0], conds[1:]...).Select(fields).Updates(newValue)
 	if result.Error != nil {
-		return newDBError(result.Error.Error())
+		return result.RowsAffected, newDBError(result.Error.Error())
 	}
-	return nil
+	return result.RowsAffected, nil
 }
 
-func Delete(model interface{}, conds ...interface{}) error {
+func Delete(model interface{}, conds ...interface{}) (rows int64, err error) {
 	result := DB.Delete(model, conds...)
 	if result.Error != nil {
-		return newDBError(result.Error.Error())
+		return result.RowsAffected, newDBError(result.Error.Error())
 	}
-	return nil
+	return result.RowsAffected, nil
 }
 
 // ******************************
