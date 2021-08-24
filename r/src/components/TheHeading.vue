@@ -20,5 +20,6 @@ const home = "首页",
 .wr-wrap {
     display: -webkit-flex; /* Safari */
     display: flex;
+    justify-content: space-around;
 }
 </style>
