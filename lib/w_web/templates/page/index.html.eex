@@ -35,4 +35,5 @@
       </li>
     </ul>
   </article>
+  <%= render("test.html", message: "Hello from layout!") %>
 </section>
