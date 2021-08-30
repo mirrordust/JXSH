@@ -1,0 +1,32 @@
+<h1>Show Image</h1>
+
+<%= if @live_action in [:edit] do %>
+  <%= live_modal @socket, WWeb.CMS.ImageLive.FormComponent,
+    id: @image.id,
+    title: @page_title,
+    action: @live_action,
+    image: @image,
+    return_to: Routes.cms_image_show_path(@socket, :show, @image) %>
+<% end %>
+
+<ul>
+
+  <li>
+    <strong>Name:</strong>
+    <%= @image.name %>
+  </li>
+
+  <li>
+    <strong>Location:</strong>
+    <%= @image.location %>
+  </li>
+
+  <li>
+    <strong>Size:</strong>
+    <%= @image.size %>
+  </li>
+
+</ul>
+
+<span><%= live_patch "Edit", to: Routes.cms_image_show_path(@socket, :edit, @image), class: "button" %></span>
+<span><%= live_redirect "Back", to: Routes.cms_image_index_path(@socket, :index) %></span>

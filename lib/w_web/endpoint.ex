@@ -7,7 +7,9 @@ defmodule WWeb.Endpoint do
   @session_options [
     store: :cookie,
     key: "_w_key",
-    signing_salt: "piWYwvUT"
+    signing_salt: "8u0+yE8v",
+    # in seconds
+    max_age: 24 * 60 * 60 * 3
   ]
 
   socket "/socket", WWeb.UserSocket,
@@ -50,17 +52,5 @@ defmodule WWeb.Endpoint do
   plug Plug.MethodOverride
   plug Plug.Head
   plug Plug.Session, @session_options
-  plug :introspect
   plug WWeb.Router
-
-  def introspect(conn, _opts) do
-    IO.puts """
-    Verb: #{inspect(conn.method)}
-    Host: #{inspect(conn.host)}
-    Headers: #{inspect(conn.req_headers)}
-    """
-
-
-    conn
-  end
 end

@@ -67,9 +67,9 @@ defmodule W.AccountsTest do
   describe "credentials" do
     alias W.Accounts.Credential
 
-    @valid_attrs %{email: "some email"}
-    @update_attrs %{email: "some updated email"}
-    @invalid_attrs %{email: nil}
+    @valid_attrs %{email: "some email", password_hash: "some password_hash"}
+    @update_attrs %{email: "some updated email", password_hash: "some updated password_hash"}
+    @invalid_attrs %{email: nil, password_hash: nil}
 
     def credential_fixture(attrs \\ %{}) do
       {:ok, credential} =
@@ -93,6 +93,7 @@ defmodule W.AccountsTest do
     test "create_credential/1 with valid data creates a credential" do
       assert {:ok, %Credential{} = credential} = Accounts.create_credential(@valid_attrs)
       assert credential.email == "some email"
+      assert credential.password_hash == "some password_hash"
     end
 
     test "create_credential/1 with invalid data returns error changeset" do
@@ -103,6 +104,7 @@ defmodule W.AccountsTest do
       credential = credential_fixture()
       assert {:ok, %Credential{} = credential} = Accounts.update_credential(credential, @update_attrs)
       assert credential.email == "some updated email"
+      assert credential.password_hash == "some updated password_hash"
     end
 
     test "update_credential/2 with invalid data returns error changeset" do

@@ -1,7 +1,7 @@
 defmodule WWeb.Plugs.Locale do
   import Plug.Conn
 
-  @locales ["en", "zh-CN", "zh-TW"]
+  @locales ["en", "zh"]
 
   def init(default), do: default
 

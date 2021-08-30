@@ -3,18 +3,20 @@ defmodule WWeb.SessionController do
 
   alias W.Accounts
 
-  def new(conn, _) do
-    render(conn, "new.html")
+  def new(conn, %{"from" => from}) do
+    IO.inspect "🐸"
+    IO.inspect from
+    render(conn, "new.html", from: from)
   end
 
-  def create(conn, %{"user" => %{"email" => email, "password" => password}}) do
+  def create(conn, %{"user" => %{"email" => email, "password" => password, "from" => from}}) do
     case Accounts.authenticate_by_email_password(email, password) do
       {:ok, user} ->
         conn
         |> put_flash(:info, "Welcome back!")
         |> put_session(:user_id, user.id)
         |> configure_session(renew: true)
-        |> redirect(to: "/")
+        |> redirect(to: from)
 
       {:error, :unauthorized} ->
         conn

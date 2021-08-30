@@ -1,0 +1,30 @@
+<h2><%= @title %></h2>
+
+<%= f = form_for @changeset, "#",
+  id: "post-form",
+  phx_target: @myself,
+  phx_change: "validate",
+  phx_submit: "save" %>
+
+  <%= label f, :title %>
+  <%= text_input f, :title %>
+  <%= error_tag f, :title %>
+
+  <%= label f, :body %>
+  <%= textarea f, :body %>
+  <%= error_tag f, :body %>
+
+  <%= label f, :published %>
+  <%= checkbox f, :published %>
+  <%= error_tag f, :published %>
+
+  <%= label f, :published_at %>
+  <%= datetime_select f, :published_at %>
+  <%= error_tag f, :published_at %>
+
+  <%= label f, :views %>
+  <%= number_input f, :views %>
+  <%= error_tag f, :views %>
+
+  <%= submit "Save", phx_disable_with: "Saving..." %>
+</form>

@@ -1,7 +1,7 @@
 defmodule W.Accounts.User do
   use Ecto.Schema
   import Ecto.Changeset
-  alias W.Accounts.{User, Credential}
+  alias W.Accounts.Credential
 
   schema "users" do
     field :name, :string
@@ -12,7 +12,7 @@ defmodule W.Accounts.User do
   end
 
   @doc false
-  def changeset(%User{} = user, attrs) do
+  def changeset(user, attrs) do
     user
     |> cast(attrs, [:name, :username])
     |> validate_required([:name, :username])

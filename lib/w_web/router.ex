@@ -2,54 +2,58 @@ defmodule WWeb.Router do
   use WWeb, :router
 
   pipeline :browser do
-    plug :accepts, ["html", "text"]
+    plug :accepts, ["html"]
     plug :fetch_session
-    plug :fetch_flash
+    plug :fetch_live_flash
+    plug :put_root_layout, {WWeb.LayoutView, :root}
     plug :protect_from_forgery
     plug :put_secure_browser_headers
-    plug WWeb.Plugs.Locale, "zh"
-  end
-
-  pipeline :api do
-    plug :accepts, ["json"]
   end
 
   scope "/", WWeb do
     pipe_through :browser
 
     get "/", PageController, :index
-    # get "/show", PageController, :show
-
-    get "/redirect_test", PageController, :redirect_test
-    get "/err_page", PageController, :err
+    # must prior to "/:post_name" to match the correct action
     get "/about", AboutController, :index
-    get "/about/:a", AboutController, :a
+    get "/:post_name", PageController, :show
 
-
-    resources "/users", UserController
     resources "/sessions", SessionController, only: [:new, :create, :delete], singleton: true
+
+    live "/pagelive", PageLive, :index, as: :livepage
+    resources "/users", UserController
   end
 
   scope "/cms", WWeb.CMS, as: :cms do
     pipe_through [:browser, :authenticate_user]
 
-    resources "/pages", PageController
+    get "/admin", AdminController, :index
+
+
+    # post
+    live "/posts", PostLive.Index, :index
+    live "/posts/new", PostLive.Index, :new
+    live "/posts/:id/edit", PostLive.Index, :edit
+
+    live "/posts/:id", PostLive.Show, :show
+    live "/posts/:id/show/edit", PostLive.Show, :edit
+
+    # tag
+    live "/tags", TagLive.Index, :index
+    live "/tags/new", TagLive.Index, :new
+    live "/tags/:id/edit", TagLive.Index, :edit
+
+    live "/tags/:id", TagLive.Show, :show
+    live "/tags/:id/show/edit", TagLive.Show, :edit
+
+    # image
+    live "/images", ImageLive.Index, :index
+    live "/images/new", ImageLive.Index, :new
+    live "/images/:id/edit", ImageLive.Index, :edit
+
+    live "/images/:id", ImageLive.Show, :show
+    live "/images/:id/show/edit", ImageLive.Show, :edit
   end
-
-  scope "/admin", WWeb.Admin, as: :admin do
-    # pipe_through [:browser, :authenticate_user, :ensure_admin]
-    pipe_through [:browser]
-
-    # resources "/posts", PostController
-    # resources "/tags", TagController
-
-    # forward "/jobs", BackgroundJob.Plug, name: "w"
-  end
-
-  # Other scopes may use custom stacks.
-  # scope "/api", WWeb do
-  #   pipe_through :api
-  # end
 
   # Enables LiveDashboard only for development
   #
@@ -72,7 +76,7 @@ defmodule WWeb.Router do
       nil ->
         conn
         |> Phoenix.Controller.put_flash(:error, "Login required")
-        |> Phoenix.Controller.redirect(to: "/")
+        |> Phoenix.Controller.redirect(to: WWeb.Router.Helpers.session_path(conn, :new, from: conn.request_path))
         |> halt()
 
       user_id ->

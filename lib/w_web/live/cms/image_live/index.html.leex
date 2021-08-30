@@ -1,0 +1,39 @@
+<h1>Listing Images</h1>
+
+<%= if @live_action in [:new, :edit] do %>
+  <%= live_modal @socket, WWeb.CMS.ImageLive.FormComponent,
+    id: @image.id || :new,
+    title: @page_title,
+    action: @live_action,
+    image: @image,
+    return_to: Routes.cms_image_index_path(@socket, :index) %>
+<% end %>
+
+<table>
+  <thead>
+    <tr>
+      <th>Name</th>
+      <th>Location</th>
+      <th>Size</th>
+
+      <th></th>
+    </tr>
+  </thead>
+  <tbody id="images">
+    <%= for image <- @images do %>
+      <tr id="image-<%= image.id %>">
+        <td><%= image.name %></td>
+        <td><%= image.location %></td>
+        <td><%= image.size %></td>
+
+        <td>
+          <span><%= live_redirect "Show", to: Routes.cms_image_show_path(@socket, :show, image) %></span>
+          <span><%= live_patch "Edit", to: Routes.cms_image_index_path(@socket, :edit, image) %></span>
+          <span><%= link "Delete", to: "#", phx_click: "delete", phx_value_id: image.id, data: [confirm: "Are you sure?"] %></span>
+        </td>
+      </tr>
+    <% end %>
+  </tbody>
+</table>
+
+<span><%= live_patch "New Image", to: Routes.cms_image_index_path(@socket, :new) %></span>

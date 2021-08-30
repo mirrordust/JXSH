@@ -6,7 +6,11 @@
   </div>
 
   <div class="form-group">
-    <%= password_input f, :password, placeholder: "Password" %>
+    <%= text_input f, :password, placeholder: "Password" %>
+  </div>
+
+  <div class="form-group">
+    <%= hidden_input f, :from, value: @from %>
   </div>
 
   <div class="form-group">

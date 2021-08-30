@@ -1,3 +1,0 @@
-<div class="phx-hero">
-  <h2>About Page's Hello World, from <%= @a %>!</h2>
-</div>

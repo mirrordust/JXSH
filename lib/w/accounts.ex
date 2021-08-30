@@ -8,18 +8,6 @@ defmodule W.Accounts do
 
   alias W.Accounts.{User, Credential}
 
-  def authenticate_by_email_password(email, _password) do
-    query =
-      from u in User,
-        inner_join: c in assoc(u, :credential),
-        where: c.email == ^email
-
-    case Repo.one(query) do
-      %User{} = user -> {:ok, user}
-      nil -> {:error, :unauthorized}
-    end
-  end
-
   @doc """
   Returns the list of users.
 
@@ -214,5 +202,30 @@ defmodule W.Accounts do
   """
   def change_credential(%Credential{} = credential, attrs \\ %{}) do
     Credential.changeset(credential, attrs)
+  end
+
+  def authenticate_by_email_password(email, password) do
+    query =
+      from u in User,
+        inner_join: c in assoc(u, :credential),
+        where: c.email == ^email
+
+    user =
+      query
+      |> Repo.one()
+      |> Repo.preload(:credential)
+
+    case verify_user(user, password) do
+      %User{} = user -> {:ok, user}
+      nil -> {:error, :unauthorized}
+    end
+  end
+
+  defp verify_user(%User{credential: %Credential{password_hash: password_hash}} = user, password) do
+    if Pbkdf2.verify_pass(password, password_hash), do: user, else: nil
+  end
+
+  defp verify_user(_user, _password) do
+    nil
   end
 end

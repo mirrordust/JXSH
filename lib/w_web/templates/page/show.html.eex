@@ -1,0 +1,1 @@
+<div> Show <%= @view_name %> </div>

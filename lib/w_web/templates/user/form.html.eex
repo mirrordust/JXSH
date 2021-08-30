@@ -18,6 +18,10 @@
       <%= label cf, :email %>
       <%= text_input cf, :email %>
       <%= error_tag cf, :email %>
+
+      <%= label cf, :password %>
+      <%= text_input cf, :password %>
+      <%= error_tag cf, :password %>
     <% end %>
   </div>
 
