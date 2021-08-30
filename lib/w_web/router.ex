@@ -14,14 +14,14 @@ defmodule WWeb.Router do
     pipe_through :browser
 
     get "/", PageController, :index
-    # must prior to "/:post_name" to match the correct action
     get "/about", AboutController, :index
-    get "/:post_name", PageController, :show
 
     resources "/sessions", SessionController, only: [:new, :create, :delete], singleton: true
 
     live "/pagelive", PageLive, :index, as: :livepage
     resources "/users", UserController
+
+    get "/:post_name", PageController, :show
   end
 
   scope "/cms", WWeb.CMS, as: :cms do
@@ -67,7 +67,7 @@ defmodule WWeb.Router do
 
     scope "/" do
       pipe_through :browser
-      live_dashboard "/dashboard", metrics: WWeb.Telemetry, ecto_repos: [W.Repo]
+      live_dashboard "/mon/dashboard", metrics: WWeb.Telemetry, ecto_repos: [W.Repo]
     end
   end
 

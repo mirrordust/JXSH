@@ -3,7 +3,7 @@ defmodule WWeb.PageController do
 
   action_fallback WWeb.FallbackController
 
-  def index(conn, _params) do
+  def index(conn, _) do
     render(conn, "index.html")
   end
 

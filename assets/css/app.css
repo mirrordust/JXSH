@@ -1,5 +1,12 @@
+/* using tailwindcss, thanks for the guide from https://pragmaticstudio.com/tutorials/adding-tailwind-css-to-phoenix */
+@tailwind base;
+
+@tailwind components;
+
+@tailwind utilities;
+
 /* This file is for your main application css. */
-@import "./phoenix.css";
+/* @import "./phoenix.css"; */
 
 /* LiveView specific classes for your customizations */
 .phx-no-feedback.invalid-feedback,
