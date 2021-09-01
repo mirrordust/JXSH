@@ -16,7 +16,7 @@ defmodule WWeb.Router do
     get "/", PageController, :index
     get "/about", AboutController, :index
 
-    resources "/sessions", SessionController, only: [:new, :create, :delete], singleton: true
+    resources "/sessions", SessionController, only: [:create, :delete], singleton: true
 
     live "/pagelive", PageLive, :index, as: :livepage
     resources "/users", UserController
@@ -25,10 +25,13 @@ defmodule WWeb.Router do
   end
 
   scope "/cms", WWeb.CMS, as: :cms do
-    pipe_through [:browser, :authenticate_user]
+    pipe_through :browser
 
     get "/admin", AdminController, :index
+  end
 
+  scope "/cms", WWeb.CMS, as: :cms do
+    pipe_through [:browser, WWeb.Plugs.AuthenticateUser]
 
     # post
     live "/posts", PostLive.Index, :index
@@ -55,32 +58,12 @@ defmodule WWeb.Router do
     live "/images/:id/show/edit", ImageLive.Show, :edit
   end
 
-  # Enables LiveDashboard only for development
-  #
-  # If you want to use the LiveDashboard in production, you should put
-  # it behind authentication and allow only admins to access it.
-  # If your application does not have an admins-only section yet,
-  # you can use Plug.BasicAuth to set up some basic authentication
-  # as long as you are also using SSL (which you should anyway).
-  if Mix.env() in [:dev, :test] do
+  scope "/mon" do
     import Phoenix.LiveDashboard.Router
 
     scope "/" do
       pipe_through :browser
-      live_dashboard "/mon/dashboard", metrics: WWeb.Telemetry, ecto_repos: [W.Repo]
-    end
-  end
-
-  defp authenticate_user(conn, _) do
-    case get_session(conn, :user_id) do
-      nil ->
-        conn
-        |> Phoenix.Controller.put_flash(:error, "Login required")
-        |> Phoenix.Controller.redirect(to: WWeb.Router.Helpers.session_path(conn, :new, from: conn.request_path))
-        |> halt()
-
-      user_id ->
-        assign(conn, :current_user, W.Accounts.get_user!(user_id))
+      live_dashboard "/dashboard", metrics: WWeb.Telemetry, ecto_repos: [W.Repo]
     end
   end
 end

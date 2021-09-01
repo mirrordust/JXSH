@@ -1,41 +1,8 @@
-<header>
-  <nav class="bg-white shadow dark:bg-gray-800">
-    <div class="container px-6 py-4 mx-auto md:flex md:justify-between md:items-center">
-      <div class="flex items-center justify-between">
-        <!-- Mobile menu button -->
-        <div class="flex md:hidden">
-          <button type="button" class="text-gray-500 dark:text-gray-200 hover:text-gray-600 dark:hover:text-gray-400 focus:outline-none focus:text-gray-600 dark:focus:text-gray-400" aria-label="toggle menu">
-            <svg viewBox="0 0 24 24" class="w-6 h-6 fill-current">
-              <path fill-rule="evenodd" d="M4 5h16a1 1 0 0 1 0 2H4a1 1 0 1 1 0-2zm0 6h16a1 1 0 0 1 0 2H4a1 1 0 0 1 0-2zm0 6h16a1 1 0 0 1 0 2H4a1 1 0 0 1 0-2z"></path>
-            </svg>
-          </button>
-        </div>
-      </div>
-      <!-- Mobile Menu open: "block", Menu closed: "hidden" -->
-      <div class="items-center md:flex">
-        <%= if @conn.request_path === Routes.page_path(@conn, :index) && 1 == 2 do %>
-          <div class="relative mt-2 lg:mt-0 lg:mx-1">
-            <span class="absolute inset-y-0 left-0 flex items-center pl-2">
-              <svg class="w-5 h-5 text-gray-600 dark:text-gray-300" viewBox="0 0 20 20" fill="none">
-                <path d="M21 21L15 15M17 10C17 13.866 13.866 17 10 17C6.13401 17 3 13.866 3 10C3 6.13401 6.13401 3 10 3C13.866 3 17 6.13401 17 10Z" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"></path>
-              </svg>
-            </span>
-            <input type="text" class="w-full pl-10 pr-4 text-gray-700 placeholder-gray-600 bg-white border-b border-gray-600 dark:placeholder-gray-300 dark:focus:border-gray-300 lg:w-56 lg:border-transparent dark:bg-gray-800 dark:text-gray-300 focus:outline-none focus:border-gray-600" placeholder="<%= WWeb.Gettext.gettext("Search") %>">
-          </div>
-        <% end %>
-        <div class="flex flex-col pt-1 pb-0.5 md:flex-row md:mx-6">
-          <a class="my-1 text-sm font-medium text-gray-700 dark:text-gray-200 hover:text-indigo-500 dark:hover:text-indigo-400 md:mx-4 md:my-0" href="<%= Routes.page_path(@conn, :index) %>"><%= WWeb.Gettext.gettext("Posts") %></a>
-          <a class="my-1 text-sm font-medium text-gray-700 dark:text-gray-200 hover:text-indigo-500 dark:hover:text-indigo-400 md:mx-4 md:my-0" href="<%= Routes.about_path(@conn, :index) %>"><%= WWeb.Gettext.gettext("About") %></a>
-        </div>
-      </div>
-    </div>
-  </nav>
-</header>
-<main role="main" class="container">
-  <%= @inner_content %>
-</main>
-<footer class="shadow flex flex-col items-center justify-between px-6 py-2 bg-blue-300 dark:bg-gray-800 sm:flex-row">
-  <div class="container px-0 py-0 mx-auto">
-    <p class="text-center text-gray-800 dark:text-white">© 2021. All rights reserved</p>
-  </div>
-</footer>
+<body>
+  <main role="main" class="container">
+    <%= @inner_content %>
+  </main>
+  <footer>
+    <p>© 2021. All rights reserved</p>
+  </footer>
+</body>

@@ -3,7 +3,7 @@
   "description": " ",
   "license": "MIT",
   "scripts": {
-    "deploy": "NODE_ENV=production webpack --mode production",
+    "deploy": "webpack --mode production",
     "watch": "webpack --mode development --watch"
   },
   "dependencies": {
@@ -17,6 +17,7 @@
     "@babel/preset-env": "^7.0.0",
     "autoprefixer": "^10.3.3",
     "babel-loader": "^8.0.0",
+    "bulma": "^0.9.3",
     "copy-webpack-plugin": "^5.1.1",
     "css-loader": "^3.4.2",
     "hard-source-webpack-plugin": "^0.13.1",
@@ -25,8 +26,8 @@
     "optimize-css-assets-webpack-plugin": "^5.0.1",
     "postcss": "^8.3.6",
     "postcss-loader": "^4.2.0",
+    "purecss": "^2.0.6",
     "sass-loader": "^8.0.2",
-    "tailwindcss": "^2.2.8",
     "terser-webpack-plugin": "^2.3.2",
     "webpack": "^4.41.5",
     "webpack-cli": "^3.3.2"
