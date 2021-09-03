@@ -16,8 +16,6 @@ defmodule WWeb.Router do
     get "/", PageController, :index
     get "/about", AboutController, :index
 
-    resources "/sessions", SessionController, only: [:create, :delete], singleton: true
-
     live "/pagelive", PageLive, :index, as: :livepage
     resources "/users", UserController
 
@@ -28,6 +26,7 @@ defmodule WWeb.Router do
     pipe_through :browser
 
     get "/admin", AdminController, :index
+    resources "/sessions", SessionController, only: [:create, :delete], singleton: true
   end
 
   scope "/cms", WWeb.CMS, as: :cms do

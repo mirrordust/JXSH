@@ -1,4 +1,4 @@
-defmodule WWeb.SessionController do
+defmodule WWeb.CMS.SessionController do
   use WWeb, :controller
 
   alias W.Accounts
