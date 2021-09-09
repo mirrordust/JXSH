@@ -1,5 +1,15 @@
 <body>
   <main role="main" class="container">
+
+
+    <div>
+    <i class="fas fa-user"></i> <!-- uses solid style -->
+    </div>
+
+  <div>
+      <i class="fab fa-github-square"></i> <!-- uses brand style -->
+  </div>
+
     <%= @inner_content %>
   </main>
   <footer>

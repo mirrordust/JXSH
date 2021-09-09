@@ -4,6 +4,7 @@ defmodule W.CMS.Tag do
 
   schema "tags" do
     field :name, :string
+    # many_to_many :posts, Post, join_through: "post_tags", on_replace: :delete
 
     timestamps()
   end

@@ -14,6 +14,6 @@ defmodule W.Repo.Migrations.CreatePosts do
     end
 
     create unique_index(:posts, [:title])
-    create index(:posts, [:view_name])
+    create unique_index(:posts, [:view_name])
   end
 end
