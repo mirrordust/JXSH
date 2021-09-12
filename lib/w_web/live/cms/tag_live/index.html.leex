@@ -1,35 +1,38 @@
-<h1>Listing Tags</h1>
+<h1 class="title">New Tag</h1>
 
-<%= if @live_action in [:new, :edit] do %>
-  <%= live_modal @socket, WWeb.CMS.TagLive.FormComponent,
-    id: @tag.id || :new,
-    title: @page_title,
-    action: @live_action,
-    tag: @tag,
-    return_to: Routes.cms_tag_index_path(@socket, :index) %>
-<% end %>
 
-<table>
-  <thead>
-    <tr>
-      <th>Name</th>
 
-      <th></th>
-    </tr>
-  </thead>
-  <tbody id="tags">
-    <%= for tag <- @tags do %>
-      <tr id="tag-<%= tag.id %>">
-        <td><%= tag.name %></td>
 
-        <td>
-          <span><%= live_redirect "Show", to: Routes.cms_tag_show_path(@socket, :show, tag) %></span>
-          <span><%= live_patch "Edit", to: Routes.cms_tag_index_path(@socket, :edit, tag) %></span>
-          <span><%= link "Delete", to: "#", phx_click: "delete", phx_value_id: tag.id, data: [confirm: "Are you sure?"] %></span>
-        </td>
-      </tr>
+
+<div class="field has-addons" phx-value-a="0">
+  <div class="control">
+    <input class="input" type="text" placeholder="New Tag..." phx-change="validate">
+  </div>
+  <div class="control">
+    <a class="button is-info" phx-click="create">Create</a>
+  </div>
+</div>
+
+
+<h1 class="title">All Tags</h1>
+
+<%= for grouped_tags <- @tag_groups do %>
+  <h2 class="subtitle"><%= elem(grouped_tags, 0) %></h2>
+
+  <div class="field is-grouped is-grouped-multiline" id="grouped_tags" phx-update="replace">
+    <%= for tag <- elem(grouped_tags, 1) do %>
+      <div class="control" id="<%= tag.id %>">
+        <div class="field has-addons">
+          <div class="control">
+            <input class="input is-rounded" type="text" value="<%= tag.name %>" phx-blur="update" phx-value-id="<%= tag.id %>">
+          </div>
+          <div class="control" data-confirm="Are you sure?" phx-click="delete" phx-value-id="<%= tag.id %>">
+            <a class="button is-info is-rounded">
+              <button class="delete"></button>
+            </a>
+          </div>
+        </div>
+      </div>
     <% end %>
-  </tbody>
-</table>
-
-<span><%= live_patch "New Tag", to: Routes.cms_tag_index_path(@socket, :new) %></span>
+  </div>
+<% end %>

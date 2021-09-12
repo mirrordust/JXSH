@@ -1,0 +1,32 @@
+<nav class="navbar is-dark has-shadow" role="navigation" aria-label="main navigation">
+
+  <div class="navbar-brand">
+    <a role="button" class="navbar-burger" aria-label="menu" aria-expanded="false" data-target="navbarAdmin">
+      <span aria-hidden="true"></span>
+      <span aria-hidden="true"></span>
+      <span aria-hidden="true"></span>
+    </a>
+  </div>
+
+
+  <div id="navbarAdmin" class="navbar-menu">
+
+    <div class="navbar-start">
+      <%= if function_exported?(Routes, :live_dashboard_path, 2) do %>
+        <%= link "LiveDashboard", to: Routes.live_dashboard_path(@socket, :home), class: "navbar-item mx-2"%>
+      <% end %>
+      <%= link "Images", to: Routes.cms_image_index_path(@socket, :index), class: "navbar-item mx-2"%>
+      <%= link "Posts", to: Routes.cms_post_index_path(@socket, :index), class: "navbar-item mx-2" %>
+      <%= link "Tags", to: Routes.cms_tag_index_path(@socket, :index), class: "navbar-item mx-2" %>
+    </div>
+
+    <div class="navbar-end">
+      <%= link @current_user.username, to: Routes.user_path(@socket, :show, @current_user.id), class: "navbar-item" %>
+      <div class="navbar-item">
+        <%= link "Log out", to: Routes.cms_session_path(@socket, :delete), method: :delete, data: [confirm: "Are you sure?"], class: "button is-link" %>
+      </div>
+    </div>
+
+  </div>
+
+</nav>

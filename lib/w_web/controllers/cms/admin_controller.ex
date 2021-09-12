@@ -7,13 +7,11 @@ defmodule WWeb.CMS.AdminController do
       nil ->
         conn
         |> put_layout(false)
-        |> render("index.html")
+        |> render("login_form.html")
 
-      user_id ->
+      _user_id ->
         conn
-        |> assign(:current_user, W.Accounts.get_user!(user_id))
-        |> put_layout(false)
-        |> render("index.html")
+        |> redirect(to: Routes.cms_tag_index_path(conn, :index))
     end
   end
 end

@@ -10,6 +10,15 @@ defmodule WWeb.Router do
     plug :put_secure_browser_headers
   end
 
+  pipeline :api do
+    plug :accepts, ["json"]
+  end
+
+  pipeline :restricted_api do
+    plug :api
+    plug WWeb.Plugs.AuthenticateUser
+  end
+
   scope "/", WWeb do
     pipe_through :browser
 
@@ -22,39 +31,18 @@ defmodule WWeb.Router do
     get "/:post_name", PageController, :show
   end
 
-  scope "/cms", WWeb.CMS, as: :cms do
-    pipe_through :browser
+  scope "/auth", WWeb.Auth do
+    pipe_through :api
 
-    get "/admin", AdminController, :index
     resources "/sessions", SessionController, only: [:create, :delete], singleton: true
   end
 
   scope "/cms", WWeb.CMS, as: :cms do
-    pipe_through [:browser, WWeb.Plugs.AuthenticateUser]
+    pipe_through :restricted_api
 
-    # post
-    live "/posts", PostLive.Index, :index
-    live "/posts/new", PostLive.Index, :new
-    live "/posts/:id/edit", PostLive.Index, :edit
-
-    live "/posts/:id", PostLive.Show, :show
-    live "/posts/:id/show/edit", PostLive.Show, :edit
-
-    # tag
-    live "/tags", TagLive.Index, :index
-    live "/tags/new", TagLive.Index, :new
-    live "/tags/:id/edit", TagLive.Index, :edit
-
-    live "/tags/:id", TagLive.Show, :show
-    live "/tags/:id/show/edit", TagLive.Show, :edit
-
-    # image
-    live "/images", ImageLive.Index, :index
-    live "/images/new", ImageLive.Index, :new
-    live "/images/:id/edit", ImageLive.Index, :edit
-
-    live "/images/:id", ImageLive.Show, :show
-    live "/images/:id/show/edit", ImageLive.Show, :edit
+    resources "/posts", PostController, only: [:index, :show, :create, :update, :delete]
+    resources "/tags", TagController, only: [:index, :show, :create, :update, :delete]
+    resources "/images", ImageController, only: [:index, :show, :create, :update, :delete]
   end
 
   scope "/mon" do
@@ -62,6 +50,7 @@ defmodule WWeb.Router do
 
     scope "/" do
       pipe_through :browser
+
       live_dashboard "/dashboard", metrics: WWeb.Telemetry, ecto_repos: [W.Repo]
     end
   end

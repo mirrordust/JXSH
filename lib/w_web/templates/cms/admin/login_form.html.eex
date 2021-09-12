@@ -1,0 +1,23 @@
+<body>
+  <main role="main" class="container mt-6 pt-6">
+    <%= form_for @conn, Routes.cms_session_path(@conn, :create), [method: :post, as: :user], fn f -> %>
+      <div class="field">
+        <label class="label">Email</label>
+        <div class="control">
+          <%= email_input f, :email, placeholder: "Email", class: "input" %>
+        </div>
+      </div>
+      <div class="field">
+        <label class="label">Password</label>
+        <div class="control">
+          <%= password_input f, :password, placeholder: "Password", class: "input" %>
+        </div>
+      </div>
+      <div class="field ">
+        <div class="control">
+          <%= submit "Login", class: "button is-info" %>
+        </div>
+      </div>
+    <% end %>
+  </main>
+</body>

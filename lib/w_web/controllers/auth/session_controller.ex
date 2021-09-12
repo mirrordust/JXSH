@@ -1,4 +1,4 @@
-defmodule WWeb.CMS.SessionController do
+defmodule WWeb.Auth.SessionController do
   use WWeb, :controller
 
   alias W.Accounts
@@ -10,7 +10,7 @@ defmodule WWeb.CMS.SessionController do
         |> put_flash(:info, "Welcome back!")
         |> put_session(:user_id, user.id)
         |> configure_session(renew: true)
-        |> redirect(to: Routes.cms_admin_path(conn, :index))
+        |> redirect(to: Routes.admin_path(conn, :index))
 
       {:error, :unauthorized} ->
         conn

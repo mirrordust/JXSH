@@ -14,7 +14,8 @@ defmodule WWeb.Plugs.AuthenticateUser do
         |> halt()
 
       user_id ->
-        assign(conn, :current_user, W.Accounts.get_user!(user_id))
+        conn
+        # assign(conn, :current_user, W.Accounts.get_user!(user_id))
     end
   end
 end

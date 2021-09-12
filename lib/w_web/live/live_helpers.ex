@@ -1,5 +1,6 @@
 defmodule WWeb.LiveHelpers do
   import Phoenix.LiveView.Helpers
+  import Phoenix.LiveView
 
   @doc """
   Renders a component inside the `WWeb.ModalComponent` component.
