@@ -11,12 +11,15 @@ defmodule WWeb.CMS.PostView do
   end
 
   def render("post.json", %{post: post}) do
-    %{id: post.id,
+    %{
+      id: post.id,
       title: post.title,
       body: post.body,
       published: post.published,
       published_at: post.published_at,
       view_name: post.view_name,
-      views: post.views}
+      views: post.views,
+      tags: render_many(post.tags, WWeb.CMS.TagView, "tag.json")
+    }
   end
 end

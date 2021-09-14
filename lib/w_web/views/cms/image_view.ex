@@ -11,9 +11,11 @@ defmodule WWeb.CMS.ImageView do
   end
 
   def render("image.json", %{image: image}) do
-    %{id: image.id,
+    %{
+      id: image.id,
       name: image.name,
       location: image.location,
-      metadata: image.metadata}
+      metadata: image.metadata
+    }
   end
 end

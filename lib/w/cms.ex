@@ -4,6 +4,7 @@ defmodule W.CMS do
   """
 
   import Ecto.Query, warn: false
+  alias Ecto.Multi
   alias W.Repo
 
   alias W.CMS.{Image, Post, Tag}
@@ -152,10 +153,21 @@ defmodule W.CMS do
 
   """
   def create_post(attrs \\ %{}) do
-    %Post{}
-    |> Post.changeset(attrs)
-    |> Ecto.Changeset.cast_assoc(:tags, with: &Tag.changeset/2)
-    |> Repo.insert()
+    multi_result =
+      Multi.new()
+      |> ensure_tags(attrs)
+      |> Multi.insert(:post, fn %{tags: tags} ->
+        %Post{}
+        |> Post.changeset(attrs)
+        |> Ecto.Changeset.put_assoc(:tags, tags)
+      end)
+      |> Repo.transaction()
+      |> IO.inspect(label: "MULTI")
+
+    case multi_result do
+      {:ok, %{post: post}} -> {:ok, post}
+      {:error, _, changeset, _} -> {:error, changeset}
+    end
   end
 
   @doc """
@@ -171,10 +183,20 @@ defmodule W.CMS do
 
   """
   def update_post(%Post{} = post, attrs) do
-    post
-    |> Post.changeset(attrs)
-    |> Ecto.Changeset.cast_assoc(:tags, with: &Tag.changeset/2)
-    |> Repo.update()
+    multi_result =
+      Multi.new()
+      |> ensure_tags(attrs)
+      |> Multi.update(:post, fn %{tags: tags} ->
+        post
+        |> Post.changeset(attrs)
+        |> Ecto.Changeset.put_assoc(:tags, tags)
+      end)
+      |> Repo.transaction()
+
+    case multi_result do
+      {:ok, %{post: post}} -> {:ok, post}
+      {:error, _, changeset, _} -> {:error, changeset}
+    end
   end
 
   @doc """
@@ -204,6 +226,44 @@ defmodule W.CMS do
   """
   def change_post(%Post{} = post, attrs \\ %{}) do
     Post.changeset(post, attrs)
+  end
+
+  defp ensure_tags(multi, attrs) do
+    # https://minhajuddin.com/2020/05/03/many-to-many-relationships-in-ecto-and-phoenix-for-products-and-tags/
+
+    # new_tags => [%{name: "Elixir", inserted_at: ..},  ...]
+    new_tags = parse_tags(attrs["tags"])
+
+    multi
+    |> Multi.insert_all(:insert_tags, Tag, new_tags, on_conflict: :nothing)
+    |> Multi.run(:tags, fn repo, _changes ->
+      tag_names =
+        case tags = attrs["tags"] do
+          nil -> []
+          _ -> for %{"name" => name} <- tags, do: name
+        end
+
+      {:ok, repo.all(from t in Tag, where: t.name in ^tag_names)}
+    end)
+  end
+
+  defp parse_tags(nil), do: []
+
+  defp parse_tags(tags) do
+    # Repo.insert_all requires the inserted_at and updated_at to be filled out
+    # and they should have time truncated to the second
+    now = NaiveDateTime.utc_now() |> NaiveDateTime.truncate(:second)
+
+    for %{"name" => name} = tag <- tags,
+        new_tag?(tag),
+        do: %{name: name, inserted_at: now, updated_at: now}
+  end
+
+  defp new_tag?(tag) do
+    case tag do
+      %{"id" => _id, "name" => _name} -> false
+      %{"name" => _name} -> true
+    end
   end
 
 

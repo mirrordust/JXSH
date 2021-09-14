@@ -9,7 +9,7 @@ defmodule W.CMS.Post do
     field :title, :string
     field :view_name, :string
     field :views, :integer
-    many_to_many :tags, W.CMS.Tag, join_through: "post_tags"#, on_replace: :delete
+    many_to_many :tags, W.CMS.Tag, join_through: "posts_tags"
 
     timestamps()
   end
@@ -21,6 +21,5 @@ defmodule W.CMS.Post do
     |> validate_required([:title, :body, :published, :view_name])
     |> unique_constraint(:title)
     |> unique_constraint(:view_name)
-    |> cast_assoc(:tags, required: true)
   end
 end
