@@ -14,10 +14,6 @@ defmodule WWeb.Router do
     plug :accepts, ["json"]
   end
 
-  pipeline :restricted_api do
-    plug :api
-  end
-
   scope "/", WWeb do
     pipe_through :browser
 
@@ -32,7 +28,6 @@ defmodule WWeb.Router do
     end
 
     scope "/cms", CMS, as: :cms do
-      resources "/images", ImageController, except: [:edit, :new]
       resources "/posts", PostController, except: [:edit, :new]
       resources "/tags", TagController, except: [:edit, :new]
     end
