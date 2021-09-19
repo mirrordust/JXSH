@@ -20,7 +20,7 @@ defmodule W.MixProject do
   def application do
     [
       mod: {W.Application, []},
-      extra_applications: [:logger, :runtime_tools, :os_mon]
+      extra_applications: [:logger, :runtime_tools, :os_mon, :crypto]
     ]
   end
 
@@ -48,7 +48,8 @@ defmodule W.MixProject do
       {:gettext, "~> 0.11"},
       {:jason, "~> 1.0"},
       {:plug_cowboy, "~> 2.0"},
-      {:pbkdf2_elixir, "~> 1.4"}
+      {:pbkdf2_elixir, "~> 1.4"},
+      {:uuid, "~> 1.1"}
     ]
   end
 

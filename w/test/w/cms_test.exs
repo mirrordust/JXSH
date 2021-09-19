@@ -62,69 +62,6 @@ defmodule W.CMSTest do
     end
   end
 
-  describe "images" do
-    alias W.CMS.Image
-
-    @valid_attrs %{location: "some location", metadata: "some metadata", name: "some name"}
-    @update_attrs %{location: "some updated location", metadata: "some updated metadata", name: "some updated name"}
-    @invalid_attrs %{location: nil, metadata: nil, name: nil}
-
-    def image_fixture(attrs \\ %{}) do
-      {:ok, image} =
-        attrs
-        |> Enum.into(@valid_attrs)
-        |> CMS.create_image()
-
-      image
-    end
-
-    test "list_images/0 returns all images" do
-      image = image_fixture()
-      assert CMS.list_images() == [image]
-    end
-
-    test "get_image!/1 returns the image with given id" do
-      image = image_fixture()
-      assert CMS.get_image!(image.id) == image
-    end
-
-    test "create_image/1 with valid data creates a image" do
-      assert {:ok, %Image{} = image} = CMS.create_image(@valid_attrs)
-      assert image.location == "some location"
-      assert image.metadata == "some metadata"
-      assert image.name == "some name"
-    end
-
-    test "create_image/1 with invalid data returns error changeset" do
-      assert {:error, %Ecto.Changeset{}} = CMS.create_image(@invalid_attrs)
-    end
-
-    test "update_image/2 with valid data updates the image" do
-      image = image_fixture()
-      assert {:ok, %Image{} = image} = CMS.update_image(image, @update_attrs)
-      assert image.location == "some updated location"
-      assert image.metadata == "some updated metadata"
-      assert image.name == "some updated name"
-    end
-
-    test "update_image/2 with invalid data returns error changeset" do
-      image = image_fixture()
-      assert {:error, %Ecto.Changeset{}} = CMS.update_image(image, @invalid_attrs)
-      assert image == CMS.get_image!(image.id)
-    end
-
-    test "delete_image/1 deletes the image" do
-      image = image_fixture()
-      assert {:ok, %Image{}} = CMS.delete_image(image)
-      assert_raise Ecto.NoResultsError, fn -> CMS.get_image!(image.id) end
-    end
-
-    test "change_image/1 returns a image changeset" do
-      image = image_fixture()
-      assert %Ecto.Changeset{} = CMS.change_image(image)
-    end
-  end
-
   describe "posts" do
     alias W.CMS.Post
 

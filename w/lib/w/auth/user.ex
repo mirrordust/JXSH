@@ -15,8 +15,8 @@ defmodule W.Auth.User do
   @doc false
   def changeset(user, attrs) do
     user
-    |> cast(attrs, [:name, :username, :email, :password_hash])
-    |> validate_required([:name, :username, :email, :password_hash])
+    |> cast(attrs, [:name, :username, :email, :password])
+    |> validate_required([:name, :username, :email, :password])
     |> unique_constraint(:username)
     |> unique_constraint(:email)
     |> put_pass_hash()

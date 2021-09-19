@@ -12,6 +12,12 @@ defmodule WWeb.Router do
 
   pipeline :api do
     plug :accepts, ["json"]
+    plug :fetch_session
+  end
+
+  pipeline :restricted_api do
+    plug :check_request_header_exist, header: "authorization"
+    plug WWeb.Plugs.AuthenticateUser
   end
 
   scope "/", WWeb do
@@ -25,9 +31,12 @@ defmodule WWeb.Router do
 
     scope "/auth", Auth, as: :auth do
       resources "/users", UserController, except: [:edit, :new]
+      resources "/sessions", SessionController, only: [:create, :delete], singleton: true
     end
 
     scope "/cms", CMS, as: :cms do
+      pipe_through :restricted_api
+
       resources "/posts", PostController, except: [:edit, :new]
       resources "/tags", TagController, except: [:edit, :new]
     end
@@ -46,6 +55,19 @@ defmodule WWeb.Router do
     scope "/" do
       pipe_through :browser
       live_dashboard "/dashboard", metrics: WWeb.Telemetry, ecto_repos: [W.Repo]
+    end
+  end
+
+  defp check_request_header_exist(conn, header: header) do
+    # Request fields: https://hexdocs.pm/plug/Plug.Conn.html#module-request-fields
+    case get_req_header(conn, header) do
+      [] ->
+        conn
+        |> Phoenix.Controller.json(%{errors: "missing essential header"})
+        |> halt()
+
+      _ ->
+        conn
     end
   end
 end
