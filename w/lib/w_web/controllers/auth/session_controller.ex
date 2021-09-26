@@ -13,7 +13,7 @@ defmodule WWeb.Auth.SessionController do
         |> put_session(:user_id, user.id)
         |> configure_session(renew: true)
         |> json(%{
-          data: %{
+          token: %{
             access_token: token
           }
         })

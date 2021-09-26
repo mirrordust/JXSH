@@ -1,6 +1,7 @@
 defmodule WWeb.CMS.PostView do
   use WWeb, :view
   alias WWeb.CMS.PostView
+  alias W.CMS.Post
 
   def render("index.json", %{posts: posts}) do
     %{data: render_many(posts, PostView, "post.json")}
@@ -10,7 +11,7 @@ defmodule WWeb.CMS.PostView do
     %{data: render_one(post, PostView, "post.json")}
   end
 
-  def render("post.json", %{post: post}) do
+  def render("post.json", %{post: %Post{} = post}) do
     %{
       id: post.id,
       title: post.title,
@@ -19,6 +20,8 @@ defmodule WWeb.CMS.PostView do
       published_at: post.published_at,
       view_name: post.view_name,
       views: post.views,
+      inserted_at: NaiveDateTime.to_string(post.inserted_at),
+      updated_at: NaiveDateTime.to_string(post.updated_at),
       tags: render_many(post.tags, WWeb.CMS.TagView, "tag.json")
     }
   end
