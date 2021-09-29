@@ -1,6 +1,8 @@
 import React from 'react'
 import ReactDOM from 'react-dom'
 // import './index.css'
+import 'bootstrap/dist/css/bootstrap.min.css';
+
 import App from './App'
 import store from './app/store'
 import { Provider } from 'react-redux'
@@ -8,6 +10,7 @@ import { Provider } from 'react-redux'
 import { worker } from './api/server'
 
 import { fetchUsers } from './features/users/usersSlice'
+import Api from './repo/api';
 
 // Start our mock API server
 worker.start({ onUnhandledRequest: 'bypass' })
@@ -22,3 +25,8 @@ ReactDOM.render(
   </React.StrictMode>,
   document.getElementById('root')
 )
+
+
+
+
+Api.getTags()
