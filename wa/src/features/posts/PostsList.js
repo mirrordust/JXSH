@@ -1,5 +1,5 @@
 import React, { useEffect } from 'react'
-import { useSelector, useDispatch } from 'react-redux'
+import { useAppSelector,useAppDispatch } from '../../app/hooks'
 import { Link } from 'react-router-dom'
 
 import { Spinner } from '../../components/Spinner'
@@ -14,7 +14,7 @@ import {
 } from './postsSlice'
 
 let PostExcerpt = ({ postId }) => {
-  const post = useSelector((state) => selectPostById(state, postId))
+  const post = useAppSelector((state) => selectPostById(state, postId))
 
   return (
     <article className="post-excerpt" key={post.id}>
@@ -34,11 +34,11 @@ let PostExcerpt = ({ postId }) => {
 }
 
 export const PostsList = () => {
-  const dispatch = useDispatch()
-  const orderedPostIds = useSelector(selectPostIds)
+  const dispatch = useAppDispatch()
+  const orderedPostIds = useAppSelector(selectPostIds)
 
-  const postStatus = useSelector((state) => state.posts.status)
-  const error = useSelector((state) => state.posts.error)
+  const postStatus = useAppSelector((state) => state.posts.status)
+  const error = useAppSelector((state) => state.posts.error)
 
   useEffect(() => {
     if (postStatus === 'idle') {
