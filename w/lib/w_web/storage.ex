@@ -9,20 +9,20 @@ defmodule WWeb.Storage do
     GenServer.start_link(__MODULE__, [], name: @name)
   end
 
-  def get_token_by_user_id(user_id) do
+  def get_user_info_by_token(identity_token) do
     # directly query from ets table, do not call server
-    case :ets.lookup(:token_storage, user_id) do
-      [{^user_id, token}] -> {:ok, token}
+    case :ets.lookup(:token_storage, identity_token) do
+      [{^identity_token, user_info}] -> {:ok, user_info}
       [] -> :error
     end
   end
 
-  def put_user_id_token(user_id, %{access: _access_token} = token) do
-    GenServer.call(@name, {:create, {user_id, token}})
+  def put_token_user_info(identity_token, %{user_id: _user_id} = user_info) do
+    GenServer.call(@name, {:create, {identity_token, user_info}})
   end
 
-  def remove_user_id_token(user_id) do
-    GenServer.call(@name, {:delete, user_id})
+  def remove_token_user_info(identity_token) do
+    GenServer.call(@name, {:delete, identity_token})
   end
 
   ## Server callbacks
@@ -34,14 +34,14 @@ defmodule WWeb.Storage do
   end
 
   @impl true
-  def handle_call({:create, {user_id, token}}, _from, state) do
-    :ets.insert(:token_storage, {user_id, token})
+  def handle_call({:create, {identity_token, user_info}}, _from, state) do
+    :ets.insert(:token_storage, {identity_token, user_info})
     {:reply, :ok, state}
   end
 
   @impl true
-  def handle_call({:delete, user_id}, _from, state) do
-    :ets.delete(:token_storage, user_id)
+  def handle_call({:delete, identity_token}, _from, state) do
+    :ets.delete(:token_storage, identity_token)
     {:reply, :ok, state}
   end
 
