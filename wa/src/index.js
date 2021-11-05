@@ -1,6 +1,7 @@
 import React from 'react'
 import ReactDOM from 'react-dom'
 import 'bootstrap/dist/css/bootstrap.min.css';
+import { Api } from './api/api';
 
 
 import App from './App'
@@ -24,3 +25,6 @@ ReactDOM.render(
   </React.StrictMode>,
   document.getElementById('root')
 )
+
+
+window.api = Api;

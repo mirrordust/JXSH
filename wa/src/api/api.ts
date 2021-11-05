@@ -1,9 +1,10 @@
 import axios, { AxiosResponse } from "axios";
+import { status } from "msw/lib/types/context";
 
-import { Collection, Credential, Post, Tag, User } from "./model";
+import { Post, Tag, Collection, Image, User, Credential } from "./model";
 
 
-// development mode settings
+/* development mode settings */
 const devMode = (!process.env.NODE_ENV || process.env.NODE_ENV === 'development');
 const prefix = devMode ? 'http://localhost:4000/api' : '/api';
 if (prefix) {
@@ -26,21 +27,17 @@ if (prefix) {
   });
 }
 
-/*
- * api definitions
- */
+/* api definitions */
+type ModelName = 'posts' | 'tags' | 'collections';
+type ModelType = Post | Tag | Collection;
 
 // login & logout
 function login(user: User) {
   return axios({
     url: `${prefix}/auth/sessions`,
     method: 'post',
-    data: {
-      user,
-    },
-    validateStatus: function (status) {
-      return status === 200 || status === 404;
-    },
+    data: { user },
+    validateStatus: status => status === 200 || status === 404
   });
 }
 
@@ -48,73 +45,63 @@ function logout(credential: Credential) {
   return axios({
     url: `${prefix}/auth/sessions`,
     method: 'delete',
-    data: {
-      token: credential.accessToken,
-    },
-    validateStatus: function (status) {
-      return status === 204 || status === 404;
-    },
+    data: { token: credential.access_token },
+    validateStatus: status => status === 204 || status === 404
   });
 }
 
 // DB model crud
-function getAll(
-  credential: Credential,
-  modelName: 'posts' | 'tags' | 'collections'
-) {
+function getAll(credential: Credential, modelName: ModelName) {
   return axios({
     url: `${prefix}/cms/${modelName}`,
     method: 'get',
-    validateStatus: function (status) {
-      return status === 200 || status === 401;
-    },
-    headers: { 'Authorization': `BASIC ${credential.accessToken}` },
+    validateStatus: status => status === 200 || status === 401,
+    headers: { 'Authorization': `BASIC ${credential.access_token}` },
   });
 }
 
-function getById(
-  credential: Credential,
-  modelName: 'posts' | 'tags' | 'collections',
-  id: number
-) {
+function getById(credential: Credential, modelName: ModelName, id: number) {
   return axios({
     url: `${prefix}/cms/${modelName}/${id}`,
     method: 'get',
-    validateStatus: function (status) {
-      return status === 200 || status === 401 || status === 404;
-    },
-    headers: { 'Authorization': `BASIC ${credential.accessToken}` },
+    validateStatus: status => status === 200 || status === 401 || status === 404,
+    headers: { 'Authorization': `BASIC ${credential.access_token}` },
   });
 }
 
-function create(
-  credential: Credential,
-  modelName: 'posts' | 'tags' | 'collections',
-  model: Post | Tag | Collection
-) {
-
+function create(credential: Credential, modelName: ModelName, model: ModelType) {
+  return axios({
+    url: `${prefix}/cms/${modelName}`,
+    method: 'post',
+    data: { [modelName.slice(0, -1)]: model },
+    validateStatus: status => status === 201 || status === 422,
+    headers: { 'Authorization': `BASIC ${credential.access_token}` },
+  });
 }
 
-function updateById(
-  credential: Credential,
-  modelName: 'posts' | 'tags' | 'collections',
-  model: Post | Tag | Collection
-) {
-
+function updateById(credential: Credential, modelName: ModelName, id: number, model: ModelType) {
+  return axios({
+    url: `${prefix}/cms/${modelName}/${id}`,
+    method: 'patch',
+    data: { [modelName.slice(0, -1)]: model },
+    validateStatus: status => status === 200,
+    headers: { 'Authorization': `BASIC ${credential.access_token}` },
+  });
 }
 
-function deleteById(
-  credential: Credential,
-  modelName: 'posts' | 'tags' | 'collections',
-  id: number
-) {
-
+function deleteById(credential: Credential, modelName: ModelName, id: number) {
+  return axios({
+    url: `${prefix}/cms/${modelName}/${id}`,
+    method: 'delete',
+    validateStatus: status => status === 204,
+    headers: { 'Authorization': `BASIC ${credential.access_token}` },
+  });
 }
 
 // images api
 
-// export
-const Api = {
+
+export const Api = {
   login,
   logout,
   getAll,
@@ -124,18 +111,15 @@ const Api = {
   deleteById,
 };
 
-export default Api;
+export type ApiStatus = {
+  status: 'idle' | 'loading' | 'succeeded' | 'failed';
+  error: string | undefined;
+};
 
-// utils
-function handleResponseError(apiName: string, response: AxiosResponse, expectedStatus: number): string | undefined {
-  if (response.status !== expectedStatus) {
-    return `[${apiName}] expected status ${expectedStatus}, but got ${response.status}`;
+/* API util functions */
+export function handleValidateResponse(expectedStatus: number, response: AxiosResponse) {
+  if (response.status === expectedStatus) {
+    return response.data;
   }
-  if (response.data.errors) {
-    return `[${apiName}] server returns errors: ${response.data.errors}`;
-  }
-}
-
-function handleApiExecutionError(apiName: string, error: unknown): string {
-  return `[API ${apiName} error] ${error}`;
+  throw Error(JSON.stringify(response.data));
 }

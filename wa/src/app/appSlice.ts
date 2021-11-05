@@ -1,28 +1,74 @@
 import { createSlice, createAsyncThunk } from '@reduxjs/toolkit';
 
+import { Api, ApiStatus, handleValidateResponse } from '../api/api';
+import { Credential, User } from '../api/model';
 import { RootState } from './store';
-import Api from '../api/api';
 
 
-const initialState = {
-  isLogin: false,
-  accessToken: '',
+type AppState = ApiStatus & {
+  isLogin: boolean;
+  credential: Credential;
 };
 
-const appSlice = createSlice({
-  name: 'app',
-  initialState,
-  reducers: {
-    f(state, action) {
-      state.isLogin = action.payload;
+const initialState: AppState = {
+  isLogin: false,
+  credential: { access_token: '' },
+  status: 'idle',
+  error: undefined
+};
+
+export const login = createAsyncThunk(
+  'app/login',
+  async (user: User) => {
+    const response = await Api.login(user);
+    return handleValidateResponse(200, response);
+  }
+);
+
+export const logout = createAsyncThunk(
+  'app/logout',
+  async (credential: Credential) => {
+    const response = await Api.logout(credential);
+    return handleValidateResponse(204, response);
+  }
+);
+
+const appSlice = createSlice(
+  {
+    name: 'app',
+    initialState,
+    reducers: {},
+    extraReducers(builder) {
+      builder
+        // login
+        .addCase(login.fulfilled, (state, action) => {
+          state.status = 'succeeded';
+          state.error = undefined;
+          state.isLogin = true;
+          state.credential = { access_token: action.payload.data.access_token };
+        })
+        .addCase(login.rejected, (state, action) => {
+          state.status = 'failed';
+          state.error = action.error.message;
+        })
+        // logout
+        .addCase(logout.fulfilled, (state, _action) => {
+          state.status = 'succeeded';
+          state.error = undefined;
+          state.isLogin = false;
+          state.credential = { access_token: '' };
+        })
+        .addCase(logout.rejected, (state, action) => {
+          state.status = 'failed';
+          state.error = action.error.message;
+        })
     }
-  },
-  extraReducers: {},
-});
+  }
+);
 
-// export const { } = appSlice.actions;
+export const selectAppisLogin = (state: RootState) => state.app.isLogin;
+export const selectCredential = (state: RootState) => state.app.credential;
+export const selectAppStatus = (state: RootState) => state.app.status;
+export const selectAppError = (state: RootState) => state.app.error;
 
-export default appSlice.reducer;
-
-// export const selectLoginStatus = (state) => state.app.isLogin;
-// export const selectAccessToken = (state) => state.app.accessToken;
+export const appReducer = appSlice.reducer;

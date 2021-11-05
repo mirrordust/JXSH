@@ -1,14 +1,14 @@
 interface DbModel {
   id: number;
-  insertedAt: string;
-  updatedAt: string;
+  inserted_at: string;
+  updated_at: string;
 }
 
 export interface Post extends DbModel {
   title: string;
   body: string;
   published: boolean;
-  publishedAt: string | null;
+  published_at: string | null;
   viewName: string;
   views: number;
   tags: string[];
@@ -26,7 +26,7 @@ export interface User {
 }
 
 export interface Credential {
-  accessToken: string;
+  access_token: string;
 }
 
 export interface Image { }

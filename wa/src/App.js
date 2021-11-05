@@ -1,69 +1,101 @@
 import React from 'react';
-import { useSelector } from 'react-redux';
 import {
-  BrowserRouter as Router,
-  Switch,
+  BrowserRouter,
+  Link,
+  Navigate,
+  Outlet,
   Route,
-  Redirect,
+  Routes,
+  useLocation
 } from 'react-router-dom';
+import { Nav, Container, Navbar } from 'react-bootstrap';
 
-import { MyNavbar } from './app/Navbar';
-import { PostsList } from './features/posts/PostsList';
-import { AddPostForm } from './features/posts/AddPostForm';
-import { EditPostForm } from './features/posts/EditPostForm';
-import { SinglePostPage } from './features/posts/SinglePostPage';
-import { UsersList } from './features/users/UsersList';
-import { UserPage } from './features/users/UserPage';
-import { NotificationsList } from './features/notifications/NotificationsList';
-// import { selectLoginStatus } from './app/appSlice';
-import { LoginForm } from './app/LoginForm';
+import { useAppSelector } from './app/hooks';
+import { selectAppisLogin } from './app/appSlice';
+import { LoginPanel } from './app/LoginPanel';
+import { TagsList } from './features/tags/TagsList';
 
-
-function PrivateRoute({ children, ...rest }) {
-  const isLogin = true;//useSelector(selectLoginStatus);
-  return (
-    <Route
-      {...rest}
-      render={({ location }) =>
-        isLogin ? (
-          children
-        ) : (
-          <Redirect
-            to={{
-              pathname: "/login",
-              state: { from: location }
-            }}
-          />
-        )
-      }
-    />
-  );
-}
 
 function App() {
   return (
-    <Router>
-      {false}
-      <MyNavbar />
+    <BrowserRouter>
       <div className="App">
-        <Switch>
-          <Route exact path="/login" component={LoginForm} />
-          <PrivateRoute exact path="/">
-            <React.Fragment>
-              <AddPostForm />
-              <PostsList />
-            </React.Fragment>
-          </PrivateRoute>
-          <PrivateRoute exact path="/posts/:postId" ><SinglePostPage /></PrivateRoute>
-          <PrivateRoute exact path="/editPost/:postId"  ><EditPostForm /></PrivateRoute>
-          <PrivateRoute exact path="/users" ><UsersList /></PrivateRoute>
-          <PrivateRoute exact path="/users/:userId" ><UserPage /></PrivateRoute>
-          <PrivateRoute exact path="/notifications"><NotificationsList /></PrivateRoute>
-          <Redirect to="/" />
-        </Switch>
+        <Routes>
+          <Route path="/" element={<Layout />} >
+            <Route index element={<LoginPanel />} />
+            <Route path="about" element={<div>About page</div>} />
+            <Route
+              path="tags"
+              element={
+                <RequireAuth>
+                  <TagsList />
+                </RequireAuth>
+              }
+            />
+
+
+            {/* Using path="*"" means "match anything", so this route
+                acts like a catch-all for URLs that we don't have explicit
+                routes for. */}
+            <Route path="*" element={<NoMatch />} />
+          </Route>
+        </Routes>
       </div>
-    </Router>
+    </BrowserRouter>
   )
+}
+
+function Layout() {
+  return (
+    <div>
+      {/* navigation */}
+      <Navbar
+        sticky="top"
+        collapseOnSelect expand="lg"
+        bg="secondary" variant="dark"
+      >
+        <Container>
+          <Navbar.Brand as={Link} to="/">W·Blog Admin</Navbar.Brand>
+          <Navbar.Toggle aria-controls="w-navbar-nav" />
+          <Navbar.Collapse id="w-navbar-nav">
+            <Nav className="me-auto">
+              <Nav.Link eventKey="0" as={Link} to="/posts">Posts</Nav.Link>
+              <Nav.Link eventKey="1" as={Link} to="/tags">Tags</Nav.Link>
+              <Nav.Link eventKey="2" as={Link} to="/collections">Collections</Nav.Link>
+              <Nav.Link eventKey="3" as={Link} to="/images">Images</Nav.Link>
+              <Nav.Link eventKey="4" as={Link} to="/about">About</Nav.Link>
+            </Nav>
+          </Navbar.Collapse>
+        </Container>
+      </Navbar>
+
+      {/* An <Outlet> renders whatever child route is currently active,
+      so you can think about this <Outlet> as a placeholder for
+      the child routes we defined above. */}
+      <Outlet />
+    </div>
+  );
+}
+
+function NoMatch() {
+  return (
+    <div>
+      <h2>Nothing to see here!</h2>
+      <p>
+        <Link to="/">Go to the home page</Link>
+      </p>
+    </div>
+  );
+}
+
+function RequireAuth({ children }) {
+  const appIsLogin = useAppSelector(selectAppisLogin);
+  const location = useLocation();
+  console.log('isLogin: ' + appIsLogin);
+  if (!appIsLogin) {
+    return <Navigate to="/" state={{ from: location }} />;
+  }
+  return children;
 }
 
 export default App;
