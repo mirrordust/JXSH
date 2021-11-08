@@ -111,10 +111,15 @@ export const Api = {
   deleteById,
 };
 
-export type ApiStatus = {
+export const initialApiStatus: {
   status: 'idle' | 'loading' | 'succeeded' | 'failed';
   error: string | undefined;
+} = {
+  status: 'idle',
+  error: undefined
 };
+
+export type ApiStatus = typeof initialApiStatus;
 
 /* API util functions */
 export function handleValidateResponse(expectedStatus: number, response: AxiosResponse) {

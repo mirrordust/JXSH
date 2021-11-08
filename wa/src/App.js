@@ -91,7 +91,6 @@ function NoMatch() {
 function RequireAuth({ children }) {
   const appIsLogin = useAppSelector(selectAppisLogin);
   const location = useLocation();
-  console.log('isLogin: ' + appIsLogin);
   if (!appIsLogin) {
     return <Navigate to="/" state={{ from: location }} />;
   }

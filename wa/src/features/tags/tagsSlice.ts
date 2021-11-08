@@ -1,19 +1,20 @@
-import { createSlice, createAsyncThunk } from '@reduxjs/toolkit';
+import {
+  createAsyncThunk,
+  createEntityAdapter,
+  createSlice
+} from '@reduxjs/toolkit';
 
-import { Api, ApiStatus, handleValidateResponse } from '../../api/api';
+import { Api, initialApiStatus, handleValidateResponse } from '../../api/api';
 import { Credential, Tag } from '../../api/model';
 import { RootState } from '../../app/store';
 
 
-type TagState = ApiStatus & {
-  tags: Tag[];
-};
+const tagAdapter = createEntityAdapter<Tag>({
+  selectId: tag => tag.id,
+  sortComparer: (a, b) => a.name.localeCompare(b.name)
+});
 
-const initialState: TagState = {
-  tags: [],
-  status: 'idle',
-  error: undefined
-};
+const initialState = tagAdapter.getInitialState(initialApiStatus);
 
 export const fetchTags = createAsyncThunk(
   'tags/fetchTags',
@@ -65,7 +66,7 @@ const tagsSlice = createSlice(
         .addCase(fetchTags.fulfilled, (state, action) => {
           state.status = 'succeeded';
           state.error = undefined;
-          state.tags.push(...action.payload.data);
+          tagAdapter.upsertMany(state, action.payload.data);
         })
         .addCase(fetchTags.rejected, (state, action) => {
           state.status = 'failed';
@@ -78,7 +79,7 @@ const tagsSlice = createSlice(
         .addCase(createTag.fulfilled, (state, action) => {
           state.status = 'succeeded';
           state.error = undefined;
-          state.tags.push(action.payload.data)
+          tagAdapter.addOne(state, action.payload.data);
         })
         .addCase(createTag.rejected, (state, action) => {
           state.status = 'failed';
@@ -91,8 +92,7 @@ const tagsSlice = createSlice(
         .addCase(updateTag.fulfilled, (state, action) => {
           state.status = 'succeeded';
           state.error = undefined;
-          const idx = state.tags.findIndex(t => t.id === action.payload.data.id);
-          state.tags[idx] = action.payload.data;
+          tagAdapter.upsertOne(state, action.payload.data);
         })
         .addCase(updateTag.rejected, (state, action) => {
           state.status = 'failed';
@@ -105,7 +105,7 @@ const tagsSlice = createSlice(
         .addCase(deleteTag.fulfilled, (state, action) => {
           state.status = 'succeeded';
           state.error = undefined;
-          state.tags = state.tags.filter(t => t.id !== action.payload.id);
+          tagAdapter.removeOne(state, action.payload.id);
         })
         .addCase(deleteTag.rejected, (state, action) => {
           state.status = 'failed';
@@ -115,8 +115,12 @@ const tagsSlice = createSlice(
   }
 );
 
-export const selectAllTags = (state: RootState) => state.tags.tags;
-export const selectTagById = (state: RootState, tagId: number) => state.tags.tags.find(t => t.id === tagId);
+export const {
+  selectAll: selectAllTags,
+  selectById: selectTagById,
+  selectIds: selectTagsIds
+} = tagAdapter.getSelectors((state: RootState) => state.tags);
+
 export const selectTagsStatus = (state: RootState) => state.tags.status;
 export const selectTagsError = (state: RootState) => state.tags.error;
 

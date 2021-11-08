@@ -16,10 +16,10 @@ import {
   createTag,
   updateTag,
   deleteTag,
-  selectAllTags,
   selectTagsError,
   selectTagsStatus,
-  selectTagById
+  selectTagById,
+  selectTagsIds
 } from './tagsSlice';
 import { selectCredential } from '../../app/appSlice';
 
@@ -71,17 +71,30 @@ let TagInfo = ({ tagId }) => {
         />
       </Col>
       <Col xs="auto">
-        <Button className="mb-2" variant="info" onClick={onEditableClicked}>
+        <Button
+          className="mb-2"
+          variant="info"
+          onClick={onEditableClicked}
+        >
           Edit
         </Button>
       </Col>
       <Col xs="auto">
-        <Button className="mb-2" variant="warning" onClick={onUpdateTagClicked}>
+        <Button
+          className="mb-2"
+          variant="warning"
+          onClick={onUpdateTagClicked}
+          disabled={!editable}
+        >
           Update
         </Button>
       </Col>
       <Col xs="auto">
-        <Button className="mb-2" variant="danger" onClick={onDeleteTagClicked}>
+        <Button
+          className="mb-2"
+          variant="danger"
+          onClick={onDeleteTagClicked}
+        >
           Delete
         </Button>
       </Col>
@@ -92,7 +105,7 @@ let TagInfo = ({ tagId }) => {
 export const TagsList = () => {
   const dispatch = useAppDispatch();
 
-  const tagList = useAppSelector(selectAllTags);
+  const tagIds = useAppSelector(selectTagsIds);
   const tagsError = useAppSelector(selectTagsError);
   const tagsStatus = useAppSelector(selectTagsStatus);
   const appCredential = useAppSelector(selectCredential);
@@ -118,8 +131,8 @@ export const TagsList = () => {
     }
   }, [tagsStatus, appCredential, dispatch]);
 
-  const tags = tagList.map((tag) => (
-    <TagInfo key={tag.id} tagId={tag.id} />
+  const tags = tagIds.map((tagId) => (
+    <TagInfo key={tagId} tagId={tagId} />
   ));
 
   let status;

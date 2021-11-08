@@ -1,6 +1,11 @@
 import { createSlice, createAsyncThunk } from '@reduxjs/toolkit';
 
-import { Api, ApiStatus, handleValidateResponse } from '../api/api';
+import {
+  Api,
+  ApiStatus,
+  initialApiStatus,
+  handleValidateResponse
+} from '../api/api';
 import { Credential, User } from '../api/model';
 import { RootState } from './store';
 
@@ -11,10 +16,9 @@ type AppState = ApiStatus & {
 };
 
 const initialState: AppState = {
+  ...initialApiStatus,
   isLogin: false,
-  credential: { access_token: '' },
-  status: 'idle',
-  error: undefined
+  credential: { access_token: '' }
 };
 
 export const login = createAsyncThunk(

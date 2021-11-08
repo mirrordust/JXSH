@@ -1,12 +1,14 @@
 import { configureStore, ThunkAction, Action } from '@reduxjs/toolkit';
 
 import { appReducer } from './appSlice';
+import { postsReducer } from '../features/posts/postsSlice';
 import { tagsReducer } from '../features/tags/tagsSlice';
 
 
 const store = configureStore({
   reducer: {
     app: appReducer,
+    posts: postsReducer,
     tags: tagsReducer,
   },
 });
