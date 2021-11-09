@@ -31,7 +31,7 @@ export const LoginPanel = () => {
       setEmail('');
       setPassword('');
     } catch (err) {
-      console.error('Failed to login: ', err)
+      console.error('Failed to login: ', err);
     }
   };
 
@@ -39,7 +39,7 @@ export const LoginPanel = () => {
     try {
       await dispatch(logout(appCredential)).unwrap();
     } catch (err) {
-      console.error('Failed to logout: ', err)
+      console.error('Failed to logout: ', err);
     }
   };
 

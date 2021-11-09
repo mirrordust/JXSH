@@ -178,7 +178,7 @@ export const WEditor = ({ postId }) => {
         try {
           await doPutOrPatchPost(changes);
         } catch (err) {
-          console.error('Failed to update the post: ', err)
+          console.error('Failed to real-time update the post: ', err);
         }
       }
     }
@@ -189,7 +189,7 @@ export const WEditor = ({ postId }) => {
       const data = await doCreatePost();
       handleCreateOrUpdate(data);
     } catch (err) {
-      console.log('Create Post error: ', err);
+      console.error('Create Post error: ', err);
     }
   };
 
@@ -198,7 +198,7 @@ export const WEditor = ({ postId }) => {
       const data = await doPutOrPatchPost();
       handleCreateOrUpdate(data);
     } catch (err) {
-      console.log('Update Post error: ', err);
+      console.error('Update Post error: ', err);
     }
   };
 

@@ -123,7 +123,7 @@ export const TagsList = () => {
       })).unwrap();
       setNewTagName('');
     } catch (err) {
-      console.error('Update Tag error: ', err);
+      console.error('Create Tag error: ', err);
     }
   };
 
