@@ -1,6 +1,7 @@
 defmodule W.CMS.Tag do
   use Ecto.Schema
   import Ecto.Changeset
+  alias W.CMS.Tag
 
   schema "tags" do
     field :name, :string
@@ -9,7 +10,7 @@ defmodule W.CMS.Tag do
   end
 
   @doc false
-  def changeset(tag, attrs) do
+  def changeset(%Tag{} = tag, attrs) do
     tag
     |> cast(attrs, [:name])
     |> validate_required([:name])

@@ -15,8 +15,8 @@ defmodule WWeb.CMS.TagView do
     %{
       id: tag.id,
       name: tag.name,
-      inserted_at: NaiveDateTime.to_string(tag.inserted_at),
-      updated_at: NaiveDateTime.to_string(tag.updated_at)
+      inserted_at: tag.inserted_at,
+      updated_at: tag.updated_at
     }
   end
 end

@@ -20,8 +20,9 @@ defmodule WWeb.CMS.PostView do
       published_at: post.published_at,
       view_name: post.view_name,
       views: post.views,
-      inserted_at: NaiveDateTime.to_string(post.inserted_at),
-      updated_at: NaiveDateTime.to_string(post.updated_at),
+      # same as result of NaiveDateTime.to_iso8601/2
+      inserted_at: post.inserted_at,
+      updated_at: NaiveDateTime.to_iso8601(post.updated_at),
       tags: render_many(post.tags, WWeb.CMS.TagView, "tag.json")
     }
   end
