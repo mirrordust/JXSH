@@ -1,6 +1,8 @@
 interface DbModel {
   id: number;
+  /* UTC time (with offset 0 hour) */
   inserted_at: string;
+  /* UTC time (with offset 0 hour) */
   updated_at: string;
 }
 
@@ -8,10 +10,11 @@ export interface Post extends DbModel {
   title: string;
   body: string;
   published: boolean;
+  /* UTC time (with offset 0 hour) */
   published_at: string | null;
-  viewName: string;
+  view_name: string;
   views: number;
-  tags: string[];
+  tags: Tag[];
 }
 
 export interface Tag extends DbModel {

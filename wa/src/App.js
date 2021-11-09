@@ -1,4 +1,3 @@
-import React from 'react';
 import {
   BrowserRouter,
   Link,
@@ -13,7 +12,9 @@ import { Nav, Container, Navbar } from 'react-bootstrap';
 import { useAppSelector } from './app/hooks';
 import { selectAppisLogin } from './app/appSlice';
 import { LoginPanel } from './app/LoginPanel';
+import { PostsList } from './features/posts/PostsList';
 import { TagsList } from './features/tags/TagsList';
+import { WEditor } from './features/posts/PostEditor';
 
 
 function App() {
@@ -23,7 +24,36 @@ function App() {
         <Routes>
           <Route path="/" element={<Layout />} >
             <Route index element={<LoginPanel />} />
-            <Route path="about" element={<div>About page</div>} />
+            <Route
+              path="about"
+              element={
+                <div>About page for test.</div>
+              }
+            />
+            <Route
+              path="posts"
+              element={
+                <RequireAuth>
+                  <PostsList />
+                </RequireAuth>
+              }
+            />
+            <Route
+              path="posts/:postId"
+              element={
+                <RequireAuth>
+                  <WEditor />
+                </RequireAuth>
+              }
+            />
+            <Route
+              path="posts/new"
+              element={
+                <RequireAuth>
+                  <WEditor />
+                </RequireAuth>
+              }
+            />
             <Route
               path="tags"
               element={

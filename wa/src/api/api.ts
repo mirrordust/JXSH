@@ -1,7 +1,6 @@
 import axios, { AxiosResponse } from "axios";
-import { status } from "msw/lib/types/context";
 
-import { Post, Tag, Collection, Image, User, Credential } from "./model";
+import { Post, Tag, Collection, User, Credential } from "./model";
 
 
 /* development mode settings */
@@ -84,7 +83,7 @@ function updateById(credential: Credential, modelName: ModelName, id: number, mo
     url: `${prefix}/cms/${modelName}/${id}`,
     method: 'patch',
     data: { [modelName.slice(0, -1)]: model },
-    validateStatus: status => status === 200,
+    validateStatus: status => status === 200 || status === 422,
     headers: { 'Authorization': `BASIC ${credential.access_token}` },
   });
 }

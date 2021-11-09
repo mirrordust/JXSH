@@ -1,6 +1,5 @@
 import { useState } from 'react';
 import {
-  Alert,
   Button,
   Container,
   Col,
@@ -9,7 +8,8 @@ import {
 } from 'react-bootstrap';
 
 import { useAppDispatch, useAppSelector } from './hooks';
-import { login, logout, selectCredential, selectAppError, selectAppisLogin } from './appSlice';
+import { login, logout, selectCredential, selectAppError, selectAppisLogin, selectAppStatus } from './appSlice';
+import { StatusBar } from '../components/StatusBar';
 
 
 export const LoginPanel = () => {
@@ -17,6 +17,7 @@ export const LoginPanel = () => {
   const [password, setPassword] = useState('');
 
   const dispatch = useAppDispatch();
+  const appStatus = useAppSelector(selectAppStatus);
   const appError = useAppSelector(selectAppError);
   const appIsLogin = useAppSelector(selectAppisLogin);
   const appCredential = useAppSelector(selectCredential);
@@ -42,13 +43,10 @@ export const LoginPanel = () => {
     }
   };
 
-  let error;
-  if (appError) {
-    error =
-      <Alert variant="danger">
-        {appError}
-      </Alert>;
-  }
+  const status = <StatusBar
+    status={appStatus}
+    error={appError}
+  />
 
   let sessionInfo;
   if (appIsLogin) {
@@ -99,7 +97,7 @@ export const LoginPanel = () => {
     <Container>
       <Row>
         <Col sm>
-          {error}
+          {status}
           {sessionInfo}
         </Col>
       </Row>

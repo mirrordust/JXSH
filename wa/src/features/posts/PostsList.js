@@ -1,67 +1,136 @@
-import React, { useEffect } from 'react'
-import { useAppSelector,useAppDispatch } from '../../app/hooks'
-import { Link } from 'react-router-dom'
-
-import { Spinner } from '../../components/Spinner'
-import { PostAuthor } from './PostAuthor'
-import { TimeAgo } from './TimeAgo'
-import { ReactionButtons } from './ReactionButtons'
+import { useEffect } from 'react';
+import { Link } from 'react-router-dom';
 import {
-  selectAllPosts,
+  Badge,
+  Button,
+  Card,
+  Container
+} from 'react-bootstrap';
+
+import { useAppDispatch, useAppSelector } from '../../app/hooks';
+import { selectCredential } from '../../app/appSlice';
+import {
   fetchPosts,
-  selectPostIds,
+  deletePost,
+  selectPostsError,
+  selectPostsStatus,
   selectPostById,
-} from './postsSlice'
+  selectPostsIds
+} from './postsSlice';
+import { Refresh, StatusBar } from '../../components/StatusBar';
+import { correctDate } from '../../utils/utils';
+
+
+let PostTags = ({ postId }) => {
+  const post = useAppSelector((state) => selectPostById(state, postId))
+  const tags = post.tags.map(tag =>
+    <Badge pill bg="info" key={tag.id}>
+      {tag.name}
+    </Badge>
+  );
+  return tags;
+};
 
 let PostExcerpt = ({ postId }) => {
+  const dispatch = useAppDispatch();
+
   const post = useAppSelector((state) => selectPostById(state, postId))
+  const appCredential = useAppSelector(selectCredential);
 
-  return (
-    <article className="post-excerpt" key={post.id}>
-      <h3>{post.title}</h3>
-      <div>
-        <PostAuthor userId={post.user} />
-        <TimeAgo timestamp={post.date} />
-      </div>
-      <p className="post-content">{post.content.substring(0, 100)}</p>
-
-      <ReactionButtons post={post} />
-      <Link to={`/posts/${post.id}`} className="button muted-button">
-        View Post
-      </Link>
-    </article>
-  )
-}
-
-export const PostsList = () => {
-  const dispatch = useAppDispatch()
-  const orderedPostIds = useAppSelector(selectPostIds)
-
-  const postStatus = useAppSelector((state) => state.posts.status)
-  const error = useAppSelector((state) => state.posts.error)
-
-  useEffect(() => {
-    if (postStatus === 'idle') {
-      dispatch(fetchPosts())
+  const onDeletePostClicked = async () => {
+    try {
+      await dispatch(deletePost({ credential: appCredential, id: postId })).unwrap();
+    } catch (err) {
+      console.error('Delete Post error: ', err);
     }
-  }, [postStatus, dispatch])
+  };
 
-  let content
-
-  if (postStatus === 'loading') {
-    content = <Spinner text="Loading..." />
-  } else if (postStatus === 'succeeded') {
-    content = orderedPostIds.map((postId) => (
-      <PostExcerpt key={postId} postId={postId} />
-    ))
-  } else if (postStatus === 'failed') {
-    content = <div>{error}</div>
+  let publishedDate;
+  if (post.published_at) {
+    if (post.published) {
+      publishedDate = correctDate(post.published_at);
+    } else {
+      publishedDate = '发布已撤回';
+    }
+  } else {
+    publishedDate = '未发布';
   }
 
   return (
-    <section className="posts-list">
-      <h2>Posts</h2>
-      {content}
-    </section>
-  )
-}
+    <Card>
+      <Card.Header>{post.title} ({post.view_name})</Card.Header>
+      <Card.Body>
+        <PostTags postId={post.id} />
+        <Card.Text>{post.body.substring(0, 100)}</Card.Text>
+        <Card.Text>
+          <Badge bg="warning">
+            创建：{correctDate(post.inserted_at)}
+          </Badge>{' '}
+          <Badge bg="secondary">
+            更新：{correctDate(post.updated_at)}
+          </Badge>{' '}
+          <Badge bg="success">
+            发布：{publishedDate}
+          </Badge>{' '}
+          <Badge bg="info">
+            浏览：{post.views}
+          </Badge>
+        </Card.Text>
+        <Card.Link as={Link} to={`/posts/${post.id}`}>Edit</Card.Link>
+        {' '}<Button
+          className="mb-2"
+          variant="danger"
+          size="sm"
+          onClick={onDeletePostClicked}
+        >
+          Delete
+        </Button>
+      </Card.Body>
+    </Card>
+  );
+};
+
+
+export const PostsList = () => {
+  const dispatch = useAppDispatch();
+
+  const orderedPostIds = useAppSelector(selectPostsIds);
+  const postsStatus = useAppSelector(selectPostsStatus);
+  const postsError = useAppSelector(selectPostsError);
+  const appCredential = useAppSelector(selectCredential);
+
+  const onRefreshClicked = async () => {
+    try {
+      await dispatch(fetchPosts(appCredential)).unwrap();
+    } catch (err) {
+      console.error('Refresh Posts error: ', err);
+    }
+  };
+
+  useEffect(() => {
+    if (postsStatus === 'idle') {
+      dispatch(fetchPosts(appCredential))
+    }
+  }, [postsStatus, appCredential, dispatch]);
+
+  const posts = orderedPostIds.map((postId) => (
+    <PostExcerpt key={postId} postId={postId} />
+  ));
+
+  const status = <StatusBar
+    status={postsStatus}
+    error={postsError}
+  />;
+
+  return (
+    <Container>
+      <Refresh onRefreshClicked={onRefreshClicked} />{' '}
+      Status{' '}{status}
+      <hr />
+      <Link to="/posts/new">New Posts</Link>
+      <hr />
+      Posts
+      {posts}
+    </Container>
+  );
+};

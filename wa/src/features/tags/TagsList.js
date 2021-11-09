@@ -1,16 +1,14 @@
 import { useState, useEffect } from 'react';
 import {
-  Alert,
-  Badge,
   Button,
   Col,
   Container,
   Form,
-  Row,
-  Spinner
+  Row
 } from 'react-bootstrap';
 
 import { useAppDispatch, useAppSelector } from '../../app/hooks';
+import { selectCredential } from '../../app/appSlice';
 import {
   fetchTags,
   createTag,
@@ -21,13 +19,13 @@ import {
   selectTagById,
   selectTagsIds
 } from './tagsSlice';
-import { selectCredential } from '../../app/appSlice';
+import { Refresh, StatusBar } from '../../components/StatusBar';
 
 
 let TagInfo = ({ tagId }) => {
   const dispatch = useAppDispatch();
 
-  const tag = useAppSelector((state) => selectTagById(state, tagId));
+  const tag = useAppSelector(state => selectTagById(state, tagId));
   const appCredential = useAppSelector(selectCredential);
 
   const [tagName, setTagName] = useState(tag.name);
@@ -65,6 +63,7 @@ let TagInfo = ({ tagId }) => {
         <Form.Control
           className="mb-2"
           id="tagName"
+          size="sm"
           value={tagName}
           readOnly={!editable}
           onChange={onTagNameChanged}
@@ -74,6 +73,7 @@ let TagInfo = ({ tagId }) => {
         <Button
           className="mb-2"
           variant="info"
+          size="sm"
           onClick={onEditableClicked}
         >
           Edit
@@ -83,6 +83,7 @@ let TagInfo = ({ tagId }) => {
         <Button
           className="mb-2"
           variant="warning"
+          size="sm"
           onClick={onUpdateTagClicked}
           disabled={!editable}
         >
@@ -93,6 +94,7 @@ let TagInfo = ({ tagId }) => {
         <Button
           className="mb-2"
           variant="danger"
+          size="sm"
           onClick={onDeleteTagClicked}
         >
           Delete
@@ -125,6 +127,14 @@ export const TagsList = () => {
     }
   };
 
+  const onRefreshClicked = async () => {
+    try {
+      await dispatch(fetchTags(appCredential)).unwrap();
+    } catch (err) {
+      console.error('Refresh Tags error: ', err);
+    }
+  };
+
   useEffect(() => {
     if (tagsStatus === 'idle') {
       dispatch(fetchTags(appCredential));
@@ -135,45 +145,40 @@ export const TagsList = () => {
     <TagInfo key={tagId} tagId={tagId} />
   ));
 
-  let status;
-  if (tagsStatus === 'idle') {
-    status = <Badge bg="secondary">Idle</Badge>
-  } else if (tagsStatus === 'loading') {
-    status = <Spinner animation="border" variant="primary" />
-  } else if (tagsStatus === 'succeeded') {
-    status = <Badge bg="success">Succeeded</Badge>
-  } else {
-    status = <Badge bg="danger">Failed</Badge>
-  }
-
-  let error;
-  if (tagsError) {
-    error = <Alert variant="danger">{tagsError}</Alert>;
-  }
+  const status = <StatusBar
+    status={tagsStatus}
+    error={tagsError}
+  />;
 
   return (
     <Container>
-      Status: {status}
-      {error}
+      <Refresh onRefreshClicked={onRefreshClicked} />{' '}
+      Status{' '}{status}
       <hr />
-      New Tags:
+      New Tags
       <Row className="align-items-center">
         <Col xs="auto">
           <Form.Control
             className="mb-2"
             id="newTagName"
+            size="sm"
             value={newTagName}
             onChange={onNewTagNameChanged}
           />
         </Col>
         <Col xs="auto">
-          <Button className="mb-2" variant="primary" onClick={onCreateTagClicked}>
+          <Button
+            className="mb-2"
+            variant="primary"
+            size="sm"
+            onClick={onCreateTagClicked}
+          >
             Create
           </Button>
         </Col>
       </Row>
       <hr />
-      Tags:
+      Tags
       {tags}
     </Container>
   );

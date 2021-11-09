@@ -45,6 +45,9 @@ const appSlice = createSlice(
     extraReducers(builder) {
       builder
         // login
+        .addCase(login.pending, (state, _action) => {
+          state.status = 'loading';
+        })
         .addCase(login.fulfilled, (state, action) => {
           state.status = 'succeeded';
           state.error = undefined;
@@ -56,6 +59,9 @@ const appSlice = createSlice(
           state.error = action.error.message;
         })
         // logout
+        .addCase(logout.pending, (state, _action) => {
+          state.status = 'loading';
+        })
         .addCase(logout.fulfilled, (state, _action) => {
           state.status = 'succeeded';
           state.error = undefined;
