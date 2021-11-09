@@ -10,7 +10,11 @@ defmodule W.CMS.Post do
     field :title, :string
     field :view_name, :string
     field :views, :integer, default: 0, null: false
-    many_to_many :tags, W.CMS.Tag, join_through: "posts_tags"
+    # default value of option on_replace is :raise, which wil raise an error
+    # when update Post with a new :tags value,
+    # change it to :delete to allow the update of :tags
+    # see: https://hexdocs.pm/ecto/2.2.11/associations.html#persistence for detail explanation
+    many_to_many :tags, W.CMS.Tag, join_through: "posts_tags", on_replace: :delete
 
     timestamps()
   end

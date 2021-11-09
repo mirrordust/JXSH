@@ -4,7 +4,9 @@ import {
   Badge,
   Button,
   Card,
-  Container
+  Col,
+  Container,
+  Row
 } from 'react-bootstrap';
 
 import { useAppDispatch, useAppSelector } from '../../app/hooks';
@@ -24,7 +26,7 @@ import { correctDate } from '../../utils/utils';
 let PostTags = ({ postId }) => {
   const post = useAppSelector((state) => selectPostById(state, postId))
   const tags = post.tags.map(tag =>
-    <Badge pill bg="info" key={tag.id}>
+    <Badge pill bg="primary" key={tag.id}>
       {tag.name}
     </Badge>
   );
@@ -76,15 +78,21 @@ let PostExcerpt = ({ postId }) => {
             浏览：{post.views}
           </Badge>
         </Card.Text>
-        <Card.Link as={Link} to={`/posts/${post.id}`}>Edit</Card.Link>
-        {' '}<Button
-          className="mb-2"
-          variant="danger"
-          size="sm"
-          onClick={onDeletePostClicked}
-        >
-          Delete
-        </Button>
+        <Row>
+          <Col className="text-left">
+            <Card.Link as={Link} to={`/posts/${post.id}`}>Edit</Card.Link>
+          </Col>
+          <Col className="text-center">
+            <Button
+              className="mb-2"
+              variant="danger"
+              size="sm"
+              onClick={onDeletePostClicked}
+            >
+              Delete
+            </Button>
+          </Col>
+        </Row>
       </Card.Body>
     </Card>
   );

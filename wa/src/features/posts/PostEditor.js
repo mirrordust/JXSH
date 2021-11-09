@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import { useState } from 'react';
 import { useParams } from 'react-router';
 import MarkdownIt from 'markdown-it';
 import MdEditor, { Plugins } from 'react-markdown-editor-lite';
@@ -12,6 +12,8 @@ import {
 
 import { useAppDispatch, useAppSelector } from '../../app/hooks';
 import { selectCredential } from '../../app/appSlice';
+// eslint-disable-next-line no-unused-vars
+import { Post } from '../../api/model';
 import {
   createPost,
   selectPostById,
@@ -61,6 +63,8 @@ const plugins = [
   'mode-toggle',
   // 'full-screen',
 ];
+
+// let DeletableTag
 
 export const WEditor = ({ postId }) => {
   const params = useParams();
@@ -148,15 +152,29 @@ export const WEditor = ({ postId }) => {
   /**
    * Update or patch post.
    * 
-   * @param {object} changes Post or partial Post object
+   * @param {Post} changes Post or partial Post object
    * @returns api result
    */
   async function doPutOrPatchPost(changes) {
     let post1;
     if (changes) {
-      post1 = { ...changes }
+      let tags1 = postTags;
+      if (changes.tags) {
+        tags1 = changes.tags;
+      }
+      post1 = {
+        ...changes,
+        id: postId_s,
+        /** 以 patch 方式进行部分更新时必须带上 tags 属性，
+         * 保证 Post.tags的正确，因为后端的 tags 是 many_to_many 关系，
+         * 不带 tags 属性的话会丢失标签信息。
+         * 具体参考：https://hexdocs.pm/ecto/2.2.11/associations.html#persistence
+         * */
+        tags: tags1
+      }
     } else {
       post1 = {
+        id: postId_s,
         title: postTitle,
         body: postBody,
         published: postPublished,
@@ -221,7 +239,7 @@ export const WEditor = ({ postId }) => {
   />;
 
   return (
-    <React.Fragment>
+    <>
       Status{' '}{status}
       <Container fluid >
         <Form>
@@ -278,6 +296,6 @@ export const WEditor = ({ postId }) => {
       >
         {publishButtonText}
       </Button>
-    </React.Fragment>
+    </>
   );
 };
