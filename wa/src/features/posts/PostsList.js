@@ -25,7 +25,9 @@ import { correctDate } from '../../utils/utils';
 
 let PostTags = ({ postId }) => {
   const post = useAppSelector((state) => selectPostById(state, postId))
-  const tags = post.tags.map(tag =>
+  // must creating a copy of post.tags before sorting
+  const orderedTags = [...post.tags].sort((a, b) => a.name.localeCompare(b.name));
+  const tags = orderedTags.map(tag =>
     <Badge pill bg="primary" key={tag.id}>
       {tag.name}
     </Badge>

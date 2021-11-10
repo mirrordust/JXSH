@@ -1,12 +1,17 @@
-import { useState } from 'react';
+import { useEffect, useState } from 'react';
 import { useParams } from 'react-router';
 import MarkdownIt from 'markdown-it';
 import MdEditor, { Plugins } from 'react-markdown-editor-lite';
 import {
   Button,
+  ButtonGroup,
   Col,
   Container,
+  Dropdown,
+  DropdownButton,
   Form,
+  FormControl,
+  InputGroup,
   Row
 } from 'react-bootstrap';
 
@@ -16,11 +21,16 @@ import { selectCredential } from '../../app/appSlice';
 import { Post } from '../../api/model';
 import {
   createPost,
-  selectPostById,
+  updatePost,
   selectPostsError,
   selectPostsStatus,
-  updatePost
+  selectPostById
 } from './postsSlice';
+import {
+  fetchTags,
+  selectAllTags,
+  selectTagsStatus
+} from '../tags/tagsSlice';
 import { StatusBar } from '../../components/StatusBar';
 
 import 'react-markdown-editor-lite/lib/index.css';
@@ -64,7 +74,59 @@ const plugins = [
   // 'full-screen',
 ];
 
-// let DeletableTag
+let DeletableTag = ({ tag, onDeleteClicked }) => {
+  return (
+    <ButtonGroup>
+      <Button variant="info" size="sm">{tag.name}</Button>
+      <Button variant="secondary" size="sm" onClick={onDeleteClicked}>x</Button>
+    </ButtonGroup>
+  );
+};
+
+let NewTagInput = ({ existingPostTags, onAddTag }) => {
+  const dispatch = useAppDispatch();
+
+  const tagsStatus = useAppSelector(selectTagsStatus);
+  const appCredential = useAppSelector(selectCredential);
+
+  useEffect(() => {
+    if (tagsStatus === 'idle') {
+      dispatch(fetchTags(appCredential));
+    }
+  }, [tagsStatus, appCredential, dispatch]);
+
+  const [name, setName] = useState('');
+
+  const existingPostTagNames = existingPostTags.map(t => t.name);
+  const allTags = useAppSelector(selectAllTags);
+
+  const selectableTags = allTags.filter(t =>
+    existingPostTagNames.indexOf(t.name) === -1
+  );
+  const dropdowns = selectableTags.map(t =>
+    <Dropdown.Item key={t.id} onClick={onAddTag(t)}>
+      {t.name}
+    </Dropdown.Item>
+  );
+
+  return (
+    <InputGroup className="mb-3" size="sm">
+      <FormControl
+        value={name}
+        onChange={e => setName(e.target.value)}
+      />
+      <DropdownButton
+        id="input-group-dropdown-2"
+        variant="outline-secondary"
+        title="选择现有标签"
+        align="end"
+      >
+        {dropdowns}
+      </DropdownButton>
+      <Button onClick={onAddTag(name)} >新增</Button>
+    </InputGroup>
+  );
+};
 
 export const WEditor = ({ postId }) => {
   const params = useParams();
@@ -126,14 +188,11 @@ export const WEditor = ({ postId }) => {
   const [postPublished, setPostPublished] = useState(pub);
   const onPostPublishedClicked = async () => {
     const newValue = !postPublished
-    setPostPublished(newValue);
+    // setPostPublished(newValue);
     await realTimeSave({ published: newValue }, true);
   };
 
   const [postTags, setPostTags] = useState(tags);
-  const onPostTagsChanged = async () => {
-    await realTimeSave(true);
-  };
 
   async function doCreatePost() {
     return await dispatch(createPost({
@@ -194,7 +253,8 @@ export const WEditor = ({ postId }) => {
     if (changes) {
       if (forceUpdate || canUpdate) {
         try {
-          await doPutOrPatchPost(changes);
+          const data = await doPutOrPatchPost(changes);
+          handleCreateOrUpdate(data);
         } catch (err) {
           console.error('Failed to real-time update the post: ', err);
         }
@@ -238,9 +298,40 @@ export const WEditor = ({ postId }) => {
     error={postsError}
   />;
 
+  const exsitingPostTags = postTags.map(t =>
+    <DeletableTag
+      key={t.id}
+      tag={t}
+      onDeleteClicked={
+        async () => {
+          const newPostTags = postTags.filter(t1 => t1.id !== t.id);
+          await realTimeSave({ tags: newPostTags }, true);
+        }
+      }
+    />
+  );
+
+  const onAddTag = (value) =>
+    async () => {
+      if (value) {
+        let newPostTags;
+        if (value.id) {  // add an existing tag
+          newPostTags = [...postTags, value];
+        } else {  // a brand new tag
+          newPostTags = [...postTags, { name: value }];
+        }
+        await realTimeSave({ tags: newPostTags }, true);
+      }
+    };
+  const newTaginput = <NewTagInput
+    existingPostTags={postTags}
+    onAddTag={onAddTag}
+  />
+
   return (
     <>
       Status{' '}{status}
+
       <Container fluid >
         <Form>
           <Row>
@@ -267,6 +358,7 @@ export const WEditor = ({ postId }) => {
           </Row>
         </Form>
       </Container>
+
       <MdEditor
         plugins={plugins}
         style={{ height: '400px' }}
@@ -275,6 +367,11 @@ export const WEditor = ({ postId }) => {
         renderHTML={text => mdParser.render(text)}
         onChange={onPostBodyChanged}
       />
+
+      {exsitingPostTags}
+
+      {newTaginput}
+
       <Button
         size="sm"
         disabled={!isNewPost}
