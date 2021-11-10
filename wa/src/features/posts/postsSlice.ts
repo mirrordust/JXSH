@@ -4,7 +4,7 @@ import {
   createSlice
 } from '@reduxjs/toolkit';
 
-import { Api, initialApiStatus, handleValidateResponse } from '../../api/api';
+import { Api, initialApiStatus, handleValidateResponse, ApiStatus } from '../../api/api';
 import { Credential, Post } from '../../api/model';
 import { RootState } from '../../app/store';
 
@@ -22,7 +22,15 @@ const postAdapter = createEntityAdapter<Post>({
   }
 });
 
-const initialState = postAdapter.getInitialState(initialApiStatus);
+type PartialPostsState = ApiStatus & {
+  currentEditorUri: string;
+};
+
+const tmp: PartialPostsState = {
+  ...initialApiStatus,
+  currentEditorUri: '/posts/new'
+};
+const initialState = postAdapter.getInitialState(tmp);
 
 export const fetchPosts = createAsyncThunk(
   'posts/fetchPosts',
@@ -64,7 +72,13 @@ const postsSlice = createSlice(
   {
     name: 'posts',
     initialState,
-    reducers: {},
+    reducers: {
+      updateCurrentEditorUri(state, action) {
+        if (action.payload) {
+          state.currentEditorUri = action.payload;
+        }
+      }
+    },
     extraReducers(builder) {
       builder
         // fetch
@@ -123,6 +137,8 @@ const postsSlice = createSlice(
   }
 );
 
+export const { updateCurrentEditorUri } = postsSlice.actions;
+
 export const {
   selectAll: selectAllPosts,
   selectById: selectPostById,
@@ -136,5 +152,6 @@ export const {
 
 export const selectPostsStatus = (state: RootState) => state.posts.status;
 export const selectPostsError = (state: RootState) => state.posts.error;
+export const selectCurrentEditorUri = (state: RootState) => state.posts.currentEditorUri;
 
 export const postsReducer = postsSlice.reducer;

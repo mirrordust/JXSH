@@ -82,7 +82,13 @@ let PostExcerpt = ({ postId }) => {
         </Card.Text>
         <Row>
           <Col className="text-left">
-            <Card.Link as={Link} to={`/posts/${post.id}`}>Edit</Card.Link>
+            <Card.Link
+              as={Link}
+              to={`/posts/${post.id}`}
+              state={{ currentEditorUri: `/posts/${post.id}` }}
+            >
+              Edit
+            </Card.Link>
           </Col>
           <Col className="text-center">
             <Button

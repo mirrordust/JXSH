@@ -1,5 +1,5 @@
 import { useEffect, useState } from 'react';
-import { useParams } from 'react-router';
+import { useLocation, useParams } from 'react-router';
 import MarkdownIt from 'markdown-it';
 import MdEditor, { Plugins } from 'react-markdown-editor-lite';
 import {
@@ -24,7 +24,8 @@ import {
   updatePost,
   selectPostsError,
   selectPostsStatus,
-  selectPostById
+  selectPostById,
+  updateCurrentEditorUri
 } from './postsSlice';
 import {
   fetchTags,
@@ -150,6 +151,13 @@ export const WEditor = ({ postId }) => {
   const postsStatus = useAppSelector(selectPostsStatus);
   const postsError = useAppSelector(selectPostsError);
 
+  const location = useLocation();
+  let uri;
+  if (location.state) {
+    uri = location.state.currentEditorUri;
+  }
+  dispatch(updateCurrentEditorUri(uri))
+
   let pid = -1, t = '', c = '',
     pub = false, vn = '', tags = [];
   if (post) {
@@ -266,6 +274,7 @@ export const WEditor = ({ postId }) => {
     try {
       const data = await doCreatePost();
       handleCreateOrUpdate(data);
+      dispatch(updateCurrentEditorUri(`/posts/${data.data.id}`));
     } catch (err) {
       console.error('Create Post error: ', err);
     }

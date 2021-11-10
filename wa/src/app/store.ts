@@ -3,6 +3,7 @@ import { configureStore, ThunkAction, Action } from '@reduxjs/toolkit';
 import { appReducer } from './appSlice';
 import { postsReducer } from '../features/posts/postsSlice';
 import { tagsReducer } from '../features/tags/tagsSlice';
+import { imagesReducer } from '../features/images/imagesSlice';
 
 
 const store = configureStore({
@@ -10,6 +11,7 @@ const store = configureStore({
     app: appReducer,
     posts: postsReducer,
     tags: tagsReducer,
+    images: imagesReducer
   },
 });
 

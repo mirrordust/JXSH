@@ -11,10 +11,12 @@ import { Nav, Container, Navbar } from 'react-bootstrap';
 
 import { useAppSelector } from './app/hooks';
 import { selectAppisLogin } from './app/appSlice';
+import { selectCurrentEditorUri } from './features/posts/postsSlice';
 import { LoginPanel } from './app/LoginPanel';
 import { PostsList } from './features/posts/PostsList';
 import { TagsList } from './features/tags/TagsList';
 import { WEditor } from './features/posts/PostEditor';
+import { ImagePanel } from './features/images/ImagePanel';
 
 
 function App() {
@@ -39,7 +41,7 @@ function App() {
               }
             />
             <Route
-              path="posts/:postId"
+              path="posts/new"
               element={
                 <RequireAuth>
                   <WEditor />
@@ -47,7 +49,7 @@ function App() {
               }
             />
             <Route
-              path="posts/new"
+              path="posts/:postId"
               element={
                 <RequireAuth>
                   <WEditor />
@@ -62,7 +64,12 @@ function App() {
                 </RequireAuth>
               }
             />
-
+            <Route
+              path="images"
+              element={
+                <ImagePanel />
+              }
+            />
 
             {/* Using path="*"" means "match anything", so this route
                 acts like a catch-all for URLs that we don't have explicit
@@ -76,6 +83,8 @@ function App() {
 }
 
 function Layout() {
+  const currentEditorUri = useAppSelector(selectCurrentEditorUri);
+
   return (
     <div>
       {/* navigation */}
@@ -90,10 +99,11 @@ function Layout() {
           <Navbar.Collapse id="w-navbar-nav">
             <Nav className="me-auto">
               <Nav.Link eventKey="0" as={Link} to="/posts">Posts</Nav.Link>
-              <Nav.Link eventKey="1" as={Link} to="/tags">Tags</Nav.Link>
-              <Nav.Link eventKey="2" as={Link} to="/collections">Collections</Nav.Link>
-              <Nav.Link eventKey="3" as={Link} to="/images">Images</Nav.Link>
-              <Nav.Link eventKey="4" as={Link} to="/about">About</Nav.Link>
+              <Nav.Link eventKey="1" as={Link} to={currentEditorUri}>Post Editor</Nav.Link>
+              <Nav.Link eventKey="2" as={Link} to="/tags">Tags</Nav.Link>
+              <Nav.Link eventKey="3" as={Link} to="/collections">Collections</Nav.Link>
+              <Nav.Link eventKey="4" as={Link} to="/images">Images</Nav.Link>
+              <Nav.Link eventKey="5" as={Link} to="/about">About</Nav.Link>
             </Nav>
           </Navbar.Collapse>
         </Container>
