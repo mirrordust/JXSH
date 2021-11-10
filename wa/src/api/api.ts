@@ -5,7 +5,7 @@ import { Post, Tag, Collection, User, Credential } from "./model";
 
 /* development mode settings */
 const devMode = (!process.env.NODE_ENV || process.env.NODE_ENV === 'development');
-const prefix = devMode ? 'http://localhost:4000/api' : '/api';
+const prefix = devMode ? 'http://localhost:4000/api' : process.env.REACT_APP_PREFIX;
 if (devMode) {
   // axios拦截器
   axios.interceptors.request.use(function (config) {
