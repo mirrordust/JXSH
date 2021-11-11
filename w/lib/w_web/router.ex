@@ -22,14 +22,16 @@ defmodule WWeb.Router do
   scope "/", WWeb do
     pipe_through :browser
 
-    live "/", PageLive, :index
+    get "/", PageController, :index
+    get "/about", PageController, :about
+    get "/:post_view_name", PageController, :show
   end
 
   scope "/api", WWeb do
     pipe_through :api
 
     scope "/auth", Auth, as: :auth do
-      resources "/users", UserController, except: [:edit, :new]
+      # resources "/users", UserController, except: [:edit, :new]
       resources "/sessions", SessionController, only: [:create, :delete], singleton: true
     end
 

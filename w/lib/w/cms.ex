@@ -44,6 +44,11 @@ defmodule W.CMS do
     |> Repo.preload(:tags)
   end
 
+  def get_post_by_view_name(view_name) do
+    Repo.one(from p in Post, where: p.view_name == ^view_name)
+    |> Repo.preload(:tags)
+  end
+
   def inc_post_views(%Post{} = post) do
     {1, [%Post{views: views}]} =
       from(p in Post, where: p.id == ^post.id, select: [:views])
@@ -177,8 +182,6 @@ defmodule W.CMS do
       %{"name" => _name} -> true
     end
   end
-
-
 
   @doc """
   Returns the list of tags.
