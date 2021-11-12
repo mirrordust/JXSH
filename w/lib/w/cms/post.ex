@@ -4,10 +4,11 @@ defmodule W.CMS.Post do
   alias W.CMS.Post
 
   schema "posts" do
+    field :title, :string
     field :body, :string
+    field :rendered_body, :string
     field :published, :boolean, default: false
     field :published_at, :naive_datetime
-    field :title, :string
     field :view_name, :string
     field :views, :integer, default: 0, null: false
     # default value of option on_replace is :raise, which wil raise an error
@@ -22,8 +23,8 @@ defmodule W.CMS.Post do
   @doc false
   def changeset(%Post{} = post, attrs) do
     post
-    |> cast(attrs, [:title, :body, :published, :view_name])
-    |> validate_required([:title, :body, :published, :view_name])
+    |> cast(attrs, [:title, :body, :rendered_body, :published, :view_name])
+    |> validate_required([:title, :body, :rendered_body, :published, :view_name])
     |> unique_constraint(:title)
     |> unique_constraint(:view_name)
     |> set_published_at()
