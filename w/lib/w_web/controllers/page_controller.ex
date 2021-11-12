@@ -5,7 +5,7 @@ defmodule WWeb.PageController do
 
   def index(conn, params) do
     page = String.to_integer(Map.get(params, "page", "1"))
-    page_size = String.to_integer(Map.get(params, "page_size", "2"))
+    page_size = String.to_integer(Map.get(params, "page_size", "5"))
 
     posts = W.CMS.list_published_posts(page, page_size)
     num_of_all_posts = W.CMS.count_posts()

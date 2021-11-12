@@ -47,6 +47,7 @@ defmodule W.CMS do
   def count_tagged_posts() do
     query =
       from p in Post,
+        where: p.published == true and p.view_name != "about",
         join: t in assoc(p, :tags),
         group_by: t.id,
         select: %{tag_id: t.id, tag_name: t.name, post_count: count(p.id)}
@@ -113,7 +114,7 @@ defmodule W.CMS do
   def get_post_by_view_name(view_name) do
     query =
       from p in Post,
-        where: p.view_name == ^view_name
+        where: p.view_name == ^view_name and p.published == true
 
     Repo.one(query)
     |> Repo.preload(:tags)

@@ -11,8 +11,8 @@
         <span class="w-rendered-body-glance" w-rendered="<%= post.rendered_body %>"></span>&hellip;
         <br>
         <%= if length(post.tags) > 0 do %>
-          <%= for tag<-post.tags do %>
-            <a href="#">
+          <%= for tag <- Enum.sort(post.tags, fn t1, t2 -> t1.name <= t2.name end) do %>
+            <a href="<%= Routes.page_path(@conn, :tags) <> "?tags=#{tag.name}" %>">
               <span class="tag is-info"><%= tag.name %></span>
             </a>
           <% end %>
@@ -43,7 +43,7 @@
       <a class="pagination-next" href="<%= Routes.page_path(@conn, :index) <> "?page=#{@page+1}" %>">Next page</a>
     <% end %>
     <ul class="pagination-list">
-      <%= for p_label <-@pagination_labels do %>
+      <%= for p_label <- @pagination_labels do %>
         <%= case p_label do %>
           <% "..." ->  %>
           <li>
