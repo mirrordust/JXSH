@@ -1,5 +1,10 @@
-<main role="main" class="container">
-  <p class="alert alert-info" role="alert"><%= get_flash(@conn, :info) %></p>
-  <p class="alert alert-danger" role="alert"><%= get_flash(@conn, :error) %></p>
+<main role="main" class="container pt-4 pb-3">
   <%= @inner_content %>
 </main>
+<footer class="footer">
+  <div class="content has-text-centered">
+    <p>
+      A BLOG <strong>w</strong>ebsite.
+    </p>
+  </div>
+</footer>

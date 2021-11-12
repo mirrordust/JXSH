@@ -1,16 +1,9 @@
-<h3>title</h3>
-<p><%= @post.title %></p>
-<h3>body</h3>
-<p><%= @post.body %></p>
-<h3>views</h3>
-<p><%= @post.views %></p>
-<h3>view_name</h3>
-<p><%= @post.view_name %></p>
-<h3>published</h3>
-<p><%= @post.published %></p>
-<h3>published_at</h3>
-<p><%= @post.published_at %></p>
-<h3>inserted_at</h3>
-<p><%= @post.inserted_at %></p>
-<h3>updated_at</h3>
-<p><%= @post.updated_at %></p>
+<h1 class="title is-2"><%= @post.title %></h1>
+<p class="is-size-7 is-italic">
+  Page loads: <%= @post.views %> &nbsp;|&nbsp;
+  Last updated at <time class="w-date" datetime="<%= @post.updated_at %>"></time>
+</p>
+<hr/>
+<div class="content w-content">
+  <%= @post.body %>
+</div>

@@ -23,8 +23,10 @@ defmodule WWeb.Router do
     pipe_through :browser
 
     get "/", PageController, :index
+    get "/tags", PageController, :tags
+    get "/archives", PageController, :archives
     get "/about", PageController, :about
-    get "/:post_view_name", PageController, :show
+    get "/post/:post_view_name", PageController, :show
   end
 
   scope "/api", WWeb do

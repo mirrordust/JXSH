@@ -7,6 +7,11 @@
     "watch": "webpack --mode development --watch"
   },
   "dependencies": {
+    "@fortawesome/fontawesome-free": "^5.15.4",
+    "bulma": "^0.9.3",
+    "date-fns": "^2.25.0",
+    "markdown-it": "^12.2.0",
+    "moment": "^2.29.1",
     "phoenix": "file:../deps/phoenix",
     "phoenix_html": "file:../deps/phoenix_html",
     "phoenix_live_view": "file:../deps/phoenix_live_view",

@@ -24,6 +24,72 @@ defmodule W.CMS do
     |> Repo.preload(:tags)
   end
 
+  def count_posts do
+    Repo.one(
+      from p in Post,
+        where: p.published == true and p.view_name != "about",
+        select: count(p.id)
+    )
+  end
+
+  def list_published_posts(page, size) do
+    query =
+      from p in Post,
+        where: p.published == true and p.view_name != "about",
+        order_by: [desc: :inserted_at],
+        limit: ^size,
+        offset: ^((page - 1) * size)
+
+    Repo.all(query)
+    |> Repo.preload(:tags)
+  end
+
+  def count_tagged_posts() do
+    query =
+      from p in Post,
+        join: t in assoc(p, :tags),
+        group_by: t.id,
+        select: %{tag_id: t.id, tag_name: t.name, post_count: count(p.id)}
+
+    Repo.all(query)
+  end
+
+  def list_tagged_posts(tag_names) do
+    # reference: https://elixirforum.com/t/help-filtering-many-to-many-associations-with-ecto/4210/12
+    query =
+      from p in Post,
+        where: p.published == true and p.view_name != "about",
+        preload: [:tags],
+        join: t in assoc(p, :tags),
+        group_by: p.id,
+        having: fragment("? <@ ARRAY_AGG(?)", ^tag_names, t.name),
+        order_by: [desc: p.inserted_at]
+
+    Repo.all(query)
+  end
+
+  def list_archived_posts(start_date, end_date) do
+    query =
+      from p in Post,
+        where:
+          p.published == true and p.view_name != "about" and
+            p.inserted_at >= ^start_date and p.inserted_at < ^end_date,
+        order_by: [desc: :inserted_at]
+
+    Repo.all(query)
+    |> Repo.preload(:tags)
+  end
+
+  def list_posts_yearmonth do
+    # SELECT TO_CHAR(p0."inserted_at", 'YYYY-MM') FROM "posts" AS p0 []
+    query =
+      from p in Post,
+        where: p.published == true and p.view_name != "about",
+        select: fragment("TO_CHAR(?, 'YYYY-MM')", p.inserted_at)
+
+    Repo.all(query)
+  end
+
   @doc """
   Gets a single post.
 
@@ -45,7 +111,11 @@ defmodule W.CMS do
   end
 
   def get_post_by_view_name(view_name) do
-    Repo.one(from p in Post, where: p.view_name == ^view_name)
+    query =
+      from p in Post,
+        where: p.view_name == ^view_name
+
+    Repo.one(query)
     |> Repo.preload(:tags)
   end
 
