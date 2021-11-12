@@ -35,7 +35,7 @@ config :w, WWeb.Endpoint,
 # If you are doing OTP releases, you need to instruct Phoenix
 # to start each relevant endpoint:
 #
-#     config :w, WWeb.Endpoint, server: true
+config :w, WWeb.Endpoint, server: true
 #
 # Then you can assemble a release by calling `mix release`.
 # See `mix help release` for more information.
