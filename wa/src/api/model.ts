@@ -9,6 +9,7 @@ interface DbModel {
 export interface Post extends DbModel {
   title: string;
   body: string;
+  rendered_body: string;
   published: boolean;
   /* UTC time (with offset 0 hour) */
   published_at: string | null;

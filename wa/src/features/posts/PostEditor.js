@@ -158,12 +158,13 @@ export const WEditor = ({ postId }) => {
   }
   dispatch(updateCurrentEditorUri(uri))
 
-  let pid = -1, t = '', c = '',
+  let pid = -1, t = '', c = '', rc = '',
     pub = false, vn = '', tags = [];
   if (post) {
     pid = post.id;
     t = post.title;
     c = post.body;
+    rc = post.rendered_body;
     pub = post.published;
     vn = post.view_name;
     tags = post.tags;
@@ -180,10 +181,13 @@ export const WEditor = ({ postId }) => {
   };
 
   const [postBody, setPostBody] = useState(c);
+  const [postRenderedBody, setPostRenderedBody] = useState(rc);
   const onPostBodyChanged = async ({ html, text }) => {
-    const newValue = text;
-    setPostBody(newValue);
-    await realTimeSave({ body: newValue });
+    const newValue1 = text;
+    const newValue2 = html;
+    setPostBody(newValue1);
+    setPostRenderedBody(newValue2);
+    await realTimeSave({ body: newValue1, rendered_body: newValue2 });
   };
 
   const [postViewName, setPostViewName] = useState(vn);
@@ -209,6 +213,7 @@ export const WEditor = ({ postId }) => {
         id: postId_s,
         title: postTitle,
         body: postBody,
+        rendered_body: postRenderedBody,
         published: postPublished,
         view_name: postViewName,
         tags: postTags
@@ -244,6 +249,7 @@ export const WEditor = ({ postId }) => {
         id: postId_s,
         title: postTitle,
         body: postBody,
+        rendered_body: postRenderedBody,
         published: postPublished,
         view_name: postViewName,
         tags: postTags
@@ -295,6 +301,7 @@ export const WEditor = ({ postId }) => {
     setPostId_s(post.id);
     setPostTitle(post.title);
     setPostBody(post.body);
+    setPostRenderedBody(post.rendered_body);
     setPostViewName(post.view_name);
     setPostPublished(post.published);
     setPostTags(post.tags);
