@@ -3,7 +3,7 @@ LABEL maintainer="shhliao754@outlook.com"
 
 # used in building like --build-arg NPM_REG="some value"
 ARG NPM_REG=https://registry.npm.taobao.org
-ARG API_PREFIX=http://localhost:4000/api
+ARG API_PREFIX=http://gsmr.xyz/api
 
 ENV NODE_ENV=production \
     APP_PORT=3000 \
