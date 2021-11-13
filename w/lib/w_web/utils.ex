@@ -74,10 +74,14 @@ defmodule WWeb.Utils do
     r_endpoint = if x < n, do: [n], else: []
     l_dot = if x - 2 > ll, do: ["..."], else: []
     r_dot = if n - x - 1 > rr, do: ["..."], else: []
-    l_range = Range.new(x - ll, x - 1, 1)
-    l_expand = Enum.to_list(l_range)
-    r_range = Range.new(x + 1, x + rr, 1)
-    r_expand = Enum.to_list(r_range)
+    # compatible for elixir 1.9.0,
+    # which only support first..last, not support first..last//step
+    a = x - ll
+    b = x - 1
+    l_expand = if a <= b, do: Enum.to_list(a..b), else: []
+    c = x + 1
+    d = x + rr
+    r_expand = if c <= d, do: Enum.to_list(c..d), else: []
 
     l_endpoint ++ l_dot ++ l_expand ++ [x] ++ r_expand ++ r_dot ++ r_endpoint
   end

@@ -3,6 +3,7 @@ FROM elixir:1.9.0-alpine AS build
 ARG NPM_REG=https://registry.npm.taobao.org
 
 # install build dependencies
+RUN sed -i 's/dl-cdn.alpinelinux.org/mirrors.tuna.tsinghua.edu.cn/g' /etc/apk/repositories
 RUN apk add --no-cache build-base npm git python
 
 # prepare build dir
@@ -37,6 +38,7 @@ RUN mix do compile, release
 
 # prepare release image
 FROM alpine:3.9 AS app
+RUN sed -i 's/dl-cdn.alpinelinux.org/mirrors.tuna.tsinghua.edu.cn/g' /etc/apk/repositories
 RUN apk add --no-cache openssl ncurses-libs
 
 WORKDIR /app
