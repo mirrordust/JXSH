@@ -1,5 +1,7 @@
 FROM elixir:1.9.0-alpine AS build
 
+ARG NPM_REG=https://registry.npm.taobao.org
+
 # install build dependencies
 RUN apk add --no-cache build-base npm git python
 
@@ -20,7 +22,7 @@ RUN mix do deps.get, deps.compile
 
 # build assets
 COPY assets/package.json assets/package-lock.json ./assets/
-RUN npm --prefix ./assets ci --progress=false --no-audit --loglevel=error
+RUN npm --prefix ./assets ci --registry=${NPM_REG} --progress=false --no-audit --loglevel=error
 
 COPY priv priv
 COPY assets assets
@@ -43,8 +45,8 @@ RUN chown nobody:nobody /app
 
 USER nobody:nobody
 
-COPY --from=build --chown=nobody:nobody /app/_build/prod/rel/my_app ./
+COPY --from=build --chown=nobody:nobody /app/_build/prod/rel/w ./
 
 ENV HOME=/app
 
-CMD ["bin/my_app", "start"]
+CMD ["bin/w", "start"]

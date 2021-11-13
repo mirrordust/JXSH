@@ -74,8 +74,10 @@ defmodule WWeb.Utils do
     r_endpoint = if x < n, do: [n], else: []
     l_dot = if x - 2 > ll, do: ["..."], else: []
     r_dot = if n - x - 1 > rr, do: ["..."], else: []
-    l_expand = (x - ll)..(x - 1)//1 |> Enum.to_list()
-    r_expand = (x + 1)..(x + rr)//1 |> Enum.to_list()
+    l_range = Range.new(x - ll, x - 1, 1)
+    l_expand = Enum.to_list(l_range)
+    r_range = Range.new(x + 1, x + rr, 1)
+    r_expand = Enum.to_list(r_range)
 
     l_endpoint ++ l_dot ++ l_expand ++ [x] ++ r_expand ++ r_dot ++ r_endpoint
   end

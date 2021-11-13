@@ -104,11 +104,17 @@ defmodule WWeb.PageController do
 
   def about(conn, _) do
     case W.CMS.get_post_by_view_name("about") do
-      %Post{} = post when post.published == true ->
-        render(conn, "show.html",
-          page_title: "About",
-          post: post
-        )
+      %Post{} = post ->
+        cond do
+          post.published == true ->
+            render(conn, "show.html",
+              page_title: "About",
+              post: post
+            )
+
+          post.published == false ->
+            render(conn, "about.html", page_title: "About")
+        end
 
       _ ->
         render(conn, "about.html", page_title: "About")
