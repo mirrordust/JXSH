@@ -6,6 +6,7 @@ defmodule W.Release do
   @app :w
 
   def createdb_and_migrate do
+    # reference: https://elixirforum.com/t/how-to-create-database-on-release/28443/3
     createdb()
     migrate()
   end
@@ -73,45 +74,5 @@ defmodule W.Release do
     load_app()
     Application.put_env(@app, :minimal, true)
     Application.ensure_all_started(@app)
-  end
-
-  def seed do
-    alias W.Auth.User
-    alias W.Repo
-
-    random_string = fn length ->
-      :crypto.strong_rand_bytes(length)
-      |> Base.url_encode64()
-      |> binary_part(0, length)
-    end
-
-    email =
-      System.get_env("SEEDS_USER_EMAIL") ||
-        raise """
-        environment variable SEEDS_USER_EMAIL is missing.
-        """
-
-    password =
-      System.get_env("SEEDS_USER_PASSWORD") ||
-        raise """
-        environment variable SEEDS_USER_PASSWORD is missing.
-        """
-
-    name =
-      System.get_env("SEEDS_USER_NAME") ||
-        random_string.(10)
-
-    username =
-      System.get_env("SEEDS_USER_USERNAME") ||
-        "admin_" <> random_string.(5)
-
-    %User{}
-    |> User.changeset(%{
-      name: name,
-      username: username,
-      email: email,
-      password: password
-    })
-    |> Repo.insert!()
   end
 end
