@@ -2,7 +2,9 @@
   <%= @post.title %>
 </h1>
 <p class="is-size-7 is-italic">
-  Page loads: <%= @post.views %> &nbsp;|&nbsp;
+  <%= if @post.views > 0  do %>
+    Page loads: <%= @post.views %> &nbsp;|&nbsp;
+  <% end %>
   Created at <time class="w-date" datetime="<%= @post.inserted_at %>"></time> &nbsp;|&nbsp;
   Last updated at <time class="w-date" datetime="<%= @post.updated_at %>"></time>
 </p>
