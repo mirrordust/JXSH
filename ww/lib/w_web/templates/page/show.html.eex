@@ -1,0 +1,23 @@
+<h1 class="title is-2">
+  <%= @post.title %>
+</h1>
+<p class="is-size-7 is-italic">
+  <%= if @post.views > 0  do %>
+    Page loads: <%= @post.views %> &nbsp;|&nbsp;
+  <% end %>
+  Created at <time class="w-date" datetime="<%= @post.inserted_at %>"></time> &nbsp;|&nbsp;
+  Last updated at <time class="w-date" datetime="<%= @post.updated_at %>"></time>
+</p>
+<%= if length(@post.tags) > 0 do %>
+  <p class="pt-1">
+    <%= for tag <- Enum.sort(@post.tags, fn t1, t2 -> t1.name <= t2.name end) do %>
+      <a href="<%= Routes.page_path(@conn, :tags) <> "?tags=#{tag.name}" %>">
+        <span class="tag is-info"><%= tag.name %></span>
+      </a>
+    <% end %>
+  </p>
+<% end %>
+<hr class="mt-1">
+<div class="content w-content">
+  <%= @post.body %>
+</div>
