@@ -9,23 +9,16 @@
         <relativePath>../pom.xml</relativePath>
     </parent>
 
-    <artifactId>webadmin</artifactId>
+    <artifactId>gateway</artifactId>
     <version>0.0.1-SNAPSHOT</version>
-    <name>webadmin</name>
+    <name>gateway</name>
     <packaging>jar</packaging>
-    <description>webadmin</description>
+    <description>gateway</description>
 
     <dependencies>
         <dependency>
-            <groupId>org.springframework.boot</groupId>
-            <artifactId>spring-boot-starter-web</artifactId>
-        </dependency>
-
-        <!-- my module dependencies -->
-        <dependency>
-            <groupId>me.gsmr</groupId>
-            <artifactId>common</artifactId>
-            <version>0.0.1-SNAPSHOT</version>
+            <groupId>org.springframework.cloud</groupId>
+            <artifactId>spring-cloud-starter-gateway</artifactId>
         </dependency>
     </dependencies>
 
