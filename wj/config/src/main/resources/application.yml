@@ -1,12 +1,41 @@
-server:
-  port: 8888
+---
 spring:
   application:
-    name: wconf-server
+    name: w-config
+  config:
+    activate:
+      onProfile: default
   cloud:
     config:
       server:
         git:
           uri: ${user.home}/GitRepo/config
-          default-label: master
-          search-paths: wconf
+          defaultLabel: master
+          searchPaths: wconf
+server:
+  port: 10000
+eureka:
+  client:
+    serviceUrl:
+      defaultZone: http://peer-1-server.com:9001/eureka, http://peer-2-server.com:9002/eureka, http://peer-3-server.com:9003/eureka
+
+---
+spring:
+  application:
+    name: w-config
+  config:
+    activate:
+      onProfile: secondary
+  cloud:
+    config:
+      server:
+        git:
+          uri: ${user.home}/GitRepo/config
+          defaultLabel: master
+          searchPaths: wconf
+server:
+  port: 10001
+eureka:
+  client:
+    serviceUrl:
+      defaultZone: http://peer-1-server.com:9001/eureka, http://peer-2-server.com:9002/eureka, http://peer-3-server.com:9003/eureka

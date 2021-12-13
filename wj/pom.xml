@@ -13,10 +13,11 @@
         <module>gateway</module>
         <module>registry</module>
         <module>config</module>
-        <module>web</module>
-        <module>webadmin</module>
+        <module>authservice</module>
         <module>postservice</module>
         <module>imageservice</module>
+        <module>web</module>
+        <module>webadmin</module>
         <module>dao</module>
         <module>entity</module>
         <module>common</module>
@@ -55,11 +56,6 @@
         <dependency>
             <groupId>org.springframework.boot</groupId>
             <artifactId>spring-boot-configuration-processor</artifactId>
-            <optional>true</optional>
-        </dependency>
-        <dependency>
-            <groupId>org.projectlombok</groupId>
-            <artifactId>lombok</artifactId>
             <optional>true</optional>
         </dependency>
     </dependencies>
