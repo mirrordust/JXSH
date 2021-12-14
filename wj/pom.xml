@@ -19,7 +19,6 @@
         <module>web</module>
         <module>webadmin</module>
         <module>dao</module>
-        <module>entity</module>
         <module>common</module>
     </modules>
 
