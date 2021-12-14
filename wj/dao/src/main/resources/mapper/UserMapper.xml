@@ -4,11 +4,11 @@
     <sql id="select">
         SELECT * FROM users
     </sql>
-    <select id="findById" parameterType="long" resultType="me.gsmr.entity.account.User">
+    <select id="findById" parameterType="long" resultType="me.gsmr.common.model.entity.account.User">
         <include refid="select"></include>
         WHERE id = #{id}
     </select>
-    <select id="findAll" resultType="me.gsmr.entity.account.User">
+    <select id="findAll" resultType="me.gsmr.common.model.entity.account.User">
         SELECT * FROM users
     </select>
 </mapper>

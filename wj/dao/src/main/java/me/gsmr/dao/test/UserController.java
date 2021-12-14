@@ -1,6 +1,6 @@
 package me.gsmr.dao.test;
 
-import me.gsmr.entity.account.User;
+import me.gsmr.common.model.entity.account.User;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;

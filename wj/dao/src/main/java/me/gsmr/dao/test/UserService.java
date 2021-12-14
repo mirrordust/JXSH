@@ -2,7 +2,8 @@ package me.gsmr.dao.test;
 
 
 
-import me.gsmr.entity.account.User;
+
+import me.gsmr.common.model.entity.account.User;
 
 import java.util.List;
 

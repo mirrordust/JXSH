@@ -1,7 +1,7 @@
 package me.gsmr.dao.test;
 
+import me.gsmr.common.model.entity.account.User;
 import me.gsmr.dao.mapper.UserMapper;
-import me.gsmr.entity.account.User;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
