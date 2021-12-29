@@ -9,14 +9,17 @@ spring:
       discovery:
         enabled: true
         serviceId: w-config
-server:
-  port: 8080
 eureka:
   client:
     serviceUrl:
       defaultZone: http://peer-1-server.com:9001/eureka,http://peer-2-server.com:9002/eureka,http://peer-3-server.com:9003/eureka
+server:
+  port: 18080
 management:
   endpoints:
     web:
       exposure:
         include: '*'
+  endpoint:
+    gateway:
+      enabled: true

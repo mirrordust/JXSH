@@ -1,0 +1,43 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="me.gsmr.authservice.mapper.UserMapper">
+
+    <select id="findAllUsers" resultType="User">
+        SELECT *
+        FROM users
+    </select>
+
+    <select id="findUserById" parameterType="long" resultType="User">
+        SELECT *
+        FROM users
+        WHERE id = #{id}
+    </select>
+
+    <select id="findUserByEmailPasswordHash" parameterType="User" resultType="User">
+        SELECT *
+        FROM users
+        WHERE email = #{email}
+          AND password_hash = #{passwordHash}
+    </select>
+
+    <insert id="createUser" parameterType="User" useGeneratedKeys="true" keyProperty="id">
+        INSERT INTO users (name, username, email, password_hash)
+        VALUES (#{name}, #{username}, #{email}, #{passwordHash})
+    </insert>
+
+    <update id="updateUser" parameterType="User" useGeneratedKeys="true" keyProperty="id">
+        UPDATE users
+        set name=#{name},
+            username=#{username},
+            email=#{email},
+            password_hash=#{passwordHash}
+        WHERE id = #{id};
+    </update>
+
+    <delete id="deleteUser" parameterType="long">
+        DELETE
+        FROM users
+        WHERE id = #{id}
+    </delete>
+
+</mapper>
