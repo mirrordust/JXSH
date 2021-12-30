@@ -4,6 +4,7 @@ import me.gsmr.authservice.service.UserService;
 import me.gsmr.common.model.dto.account.UserDto;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.server.ResponseStatusException;
@@ -22,7 +23,8 @@ public class UserController {
 
     @GetMapping
     @ResponseStatus(HttpStatus.OK)
-    public List<UserDto> index() {
+    public List<UserDto> index(@RequestHeader HttpHeaders headers) {
+        logger.info(headers.toString());
         return userService.findAllUsers();
     }
 
