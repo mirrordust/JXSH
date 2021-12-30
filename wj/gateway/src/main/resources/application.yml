@@ -21,5 +21,6 @@ management:
       exposure:
         include: '*'
   endpoint:
+    # 可以通过 /actuator/gateway/routes 来列出所有的 routes
     gateway:
       enabled: true
