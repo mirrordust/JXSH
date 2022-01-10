@@ -1,5 +1,0 @@
-.git/
-_build/
-.elixir_ls/
-assets/node_modules/
-deps/
